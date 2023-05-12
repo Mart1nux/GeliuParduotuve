@@ -13,7 +13,27 @@ public class OrderDaoImpl implements OrderDao{
     private EntityManager em;
 
     @Override
+    public Order findOne(Integer id) {
+        return em.find(Order.class, id);
+    }
+
+    @Override
     public List<Order> findAll() {
         return em.createQuery("Select p from Order as p", Order.class).getResultList();
+    }
+
+    @Override
+    public void persist(Order order) {
+        em.persist(order);
+    }
+
+    @Override
+    public void merge(Order order) {
+        em.merge(order);
+    }
+
+    @Override
+    public void remove(Order order) {
+        em.remove(order);
     }
 }

@@ -8,4 +8,10 @@ public interface CustomerDao {
     Customer findOne(Integer id);
 
     List<Customer> findAll();
+
+    void persist(Customer customer);
+
+    void merge(Customer customer);
+
+    void remove(Customer customer);
 }

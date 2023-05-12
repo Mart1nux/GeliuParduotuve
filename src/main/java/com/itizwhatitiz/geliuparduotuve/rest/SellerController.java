@@ -8,8 +8,6 @@ import com.itizwhatitiz.geliuparduotuve.rest.dto.SellerDto;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -20,9 +18,6 @@ import java.util.List;
 @ApplicationScoped
 @Path("/sellers")
 public class SellerController {
-    @PersistenceContext(unitName = "GeliuParduotuvePersistenceUnit")
-    private EntityManager em;
-
     @Inject
     CustomerDao customerDao;
 
@@ -42,7 +37,7 @@ public class SellerController {
         Seller seller = new Seller();
         seller.setSellerCode(sellerDto.getSellerCode());
         seller.setCustomer(customer);
-        em.persist(seller);
+        sellerDao.persist(seller);
         return Response.ok(seller.getId()).build();
     }
 
@@ -50,7 +45,7 @@ public class SellerController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findOne(@PathParam("id") Integer id){
-        Seller seller = em.find(Seller.class, id);
+        Seller seller = sellerDao.findOne(id);
         if (seller == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -81,7 +76,7 @@ public class SellerController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response update(@PathParam("id") Integer id, SellerDto sellerDto){
-        Seller seller = em.find(Seller.class, id);
+        Seller seller = sellerDao.findOne(id);
         if (seller == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -91,7 +86,7 @@ public class SellerController {
         }
         seller.setSellerCode(sellerDto.getSellerCode());
         seller.setCustomer(customer);
-        em.merge(seller);
+        sellerDao.merge(seller);
         return Response.ok(sellerDto).build();
     }
 
@@ -100,14 +95,14 @@ public class SellerController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response delete(@PathParam("id") Integer id){
-        Seller seller = em.find(Seller.class, id);
+        Seller seller = sellerDao.findOne(id);
         if (seller == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         SellerDto sellerDto = new SellerDto();
         sellerDto.setSellerCode(seller.getSellerCode());
         sellerDto.setCustomerId(seller.getCustomer().getId());
-        em.remove(seller);
+        sellerDao.remove(seller);
         return Response.ok(sellerDto).build();
     }
 }

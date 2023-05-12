@@ -1,7 +1,6 @@
 package com.itizwhatitiz.geliuparduotuve.entity;
 
 import javax.persistence.*;
-import lombok.EqualsAndHashCode;
 
 import java.util.Set;
 
