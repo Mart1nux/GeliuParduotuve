@@ -8,8 +8,6 @@ import com.itizwhatitiz.geliuparduotuve.rest.dto.OrderDto;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -20,9 +18,6 @@ import java.util.List;
 @ApplicationScoped
 @Path("/orders")
 public class OrderController {
-    @PersistenceContext(unitName = "GeliuParduotuvePersistenceUnit")
-    private EntityManager em;
-
     @Inject
     CustomerDao customerDao;
 
@@ -43,7 +38,7 @@ public class OrderController {
         order.setOrderCreateDate(orderDto.getOrderCreateDate());
         order.setOrderStatus(orderDto.getOrderStatus());
         order.setCustomer(customer);
-        em.persist(order);
+        orderDao.persist(order);
         return Response.ok(order.getId()).build();
     }
 
@@ -51,7 +46,7 @@ public class OrderController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findOne(@PathParam("id") Integer id){
-        Order order = em.find(Order.class, id);
+        Order order = orderDao.findOne(id);
         if (order == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -84,7 +79,7 @@ public class OrderController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response update(@PathParam("id") Integer id, OrderDto orderDto){
-        Order order = em.find(Order.class, id);
+        Order order = orderDao.findOne(id);
         if (order == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -95,7 +90,7 @@ public class OrderController {
         order.setOrderCreateDate(orderDto.getOrderCreateDate());
         order.setOrderStatus(orderDto.getOrderStatus());
         order.setCustomer(customer);
-        em.merge(order);
+        orderDao.merge(order);
         return Response.ok(orderDto).build();
     }
 
@@ -104,15 +99,15 @@ public class OrderController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response delete(@PathParam("id") Integer id){
-        Order order = em.find(Order.class, id);
+        Order order = orderDao.findOne(id);
         if (order == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         OrderDto orderDto = new OrderDto();
         orderDto.setOrderCreateDate(order.getOrderCreateDate());
-        orderDto.setOrderStatus(orderDto.getOrderStatus());
+        orderDto.setOrderStatus(order.getOrderStatus());
         orderDto.setCustomerId(order.getCustomer().getId());
-        em.remove(order);
+        orderDao.remove(order);
         return Response.ok(orderDto).build();
     }
 }

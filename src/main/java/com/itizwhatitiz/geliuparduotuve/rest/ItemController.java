@@ -8,8 +8,6 @@ import com.itizwhatitiz.geliuparduotuve.rest.dto.ItemDto;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -20,9 +18,6 @@ import java.util.List;
 @ApplicationScoped
 @Path("/items")
 public class ItemController {
-    @PersistenceContext(unitName = "GeliuParduotuvePersistenceUnit")
-    private EntityManager em;
-
     @Inject
     SellerDao sellerDao;
 
@@ -44,7 +39,7 @@ public class ItemController {
         item.setAmount(itemDto.getAmount());
         item.setPrice(itemDto.getPrice());
         item.setSeller(seller);
-        em.persist(item);
+        itemDao.persist(item);
         return Response.ok(item.getId()).build();
     }
 
@@ -52,7 +47,7 @@ public class ItemController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findOne(@PathParam("id") Integer id){
-        Item item = em.find(Item.class, id);
+        Item item = itemDao.findOne(id);
         if (item == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -87,7 +82,7 @@ public class ItemController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response update(@PathParam("id") Integer id, ItemDto itemDto){
-        Item item = em.find(Item.class, id);
+        Item item = itemDao.findOne(id);
         if (item == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -99,7 +94,7 @@ public class ItemController {
         item.setAmount(itemDto.getAmount());
         item.setPrice(itemDto.getPrice());
         item.setSeller(seller);
-        em.merge(item);
+        itemDao.merge(item);
         return Response.ok(itemDto).build();
     }
 
@@ -108,7 +103,7 @@ public class ItemController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response delete(@PathParam("id") Integer id){
-        Item item = em.find(Item.class, id);
+        Item item = itemDao.findOne(id);
         if (item == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -117,7 +112,7 @@ public class ItemController {
         itemDto.setAmount(item.getAmount());
         itemDto.setPrice(item.getPrice());
         itemDto.setSellerId(item.getSeller().getId());
-        em.remove(item);
+        itemDao.remove(item);
         return Response.ok(itemDto).build();
     }
 }

@@ -6,8 +6,6 @@ import com.itizwhatitiz.geliuparduotuve.rest.dto.CustomerDto;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -18,10 +16,6 @@ import java.util.List;
 @ApplicationScoped
 @Path("/customers")
 public class CustomerController {
-
-    @PersistenceContext(unitName = "GeliuParduotuvePersistenceUnit")
-    private EntityManager em;
-
     @Inject
     CustomerDao customerDao;
 
@@ -33,11 +27,11 @@ public class CustomerController {
     public Response create(CustomerDto customerDto){
         Customer customer = new Customer();
         customer.setFirstname(customerDto.getFirstname());
-        customer.setLastname(customerDto.getUsername());
+        customer.setLastname(customerDto.getLastname());
         customer.setUsername(customerDto.getUsername());
         customer.setPassword(customerDto.getPassword());
         customer.setRole(customerDto.getRole());
-        em.persist(customer);
+        customerDao.persist(customer);
         return Response.ok(customer).build();
     }
 
@@ -45,7 +39,7 @@ public class CustomerController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findOne(@PathParam("id") Integer id){
-        Customer customer = em.find(Customer.class, id);
+        Customer customer = customerDao.findOne(id);
         if (customer == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -82,16 +76,16 @@ public class CustomerController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response update(@PathParam("id") Integer id, CustomerDto customerDto){
-        Customer customer = em.find(Customer.class, id);
+        Customer customer = customerDao.findOne(id);
         if (customer == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
         customer.setFirstname(customerDto.getFirstname());
-        customer.setLastname(customerDto.getUsername());
+        customer.setLastname(customerDto.getLastname());
         customer.setUsername(customerDto.getUsername());
         customer.setPassword(customerDto.getPassword());
         customer.setRole(customerDto.getRole());
-        em.merge(customer);
+        customerDao.merge(customer);
         return Response.ok(customerDto).build();
     }
 
@@ -100,7 +94,7 @@ public class CustomerController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response delete(@PathParam("id") Integer id){
-        Customer customer = em.find(Customer.class, id);
+        Customer customer = customerDao.findOne(id);
         if (customer == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -110,7 +104,7 @@ public class CustomerController {
         customerDto.setUsername(customer.getUsername());
         customerDto.setPassword(customer.getPassword());
         customerDto.setRole(customer.getRole());
-        em.remove(customer);
+        customerDao.remove(customer);
         return Response.ok(customerDto).build();
     }
 }
