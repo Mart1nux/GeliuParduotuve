@@ -9,6 +9,8 @@ public class ItemDto {
 
     private Double price;
 
+    private String description;
+
     public Integer getSellerId() {
         return sellerId;
     }
@@ -39,5 +41,13 @@ public class ItemDto {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

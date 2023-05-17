@@ -21,6 +21,8 @@ public class Customer {
 
     private String role;
 
+    private String email;
+
     @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
     private Set<Order> orders;
 
@@ -75,6 +77,14 @@ public class Customer {
         this.role = role;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public Set<Order> getOrders() {
         return orders;
     }
@@ -89,5 +99,10 @@ public class Customer {
 
     public void setSeller(Seller seller) {
         this.seller = seller;
+    }
+
+    @Override
+    public String toString() {
+        return id + " " + firstname + " " + lastname + " " + username;
     }
 }

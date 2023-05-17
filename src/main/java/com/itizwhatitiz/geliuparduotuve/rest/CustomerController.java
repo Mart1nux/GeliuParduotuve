@@ -1,10 +1,12 @@
 package com.itizwhatitiz.geliuparduotuve.rest;
 
+import com.itizwhatitiz.geliuparduotuve.businesslogic.Search;
 import com.itizwhatitiz.geliuparduotuve.dao.CustomerDao;
 import com.itizwhatitiz.geliuparduotuve.entity.Customer;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.CustomerDto;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.util.Nonbinding;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
@@ -18,6 +20,9 @@ import java.util.List;
 public class CustomerController {
     @Inject
     CustomerDao customerDao;
+
+    @Inject
+    Search search;
 
     @Path("/")
     @POST
@@ -67,6 +72,7 @@ public class CustomerController {
             customerDto.setRole(customer.getRole());
             customerDtos.add(customerDto);
         }
+        //System.out.println(search.recommendItems());
         return Response.ok(customerDtos).build();
     }
 
