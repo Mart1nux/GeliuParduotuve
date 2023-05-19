@@ -13,7 +13,9 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 @ApplicationScoped
 @Path("/items")
@@ -28,7 +30,6 @@ public class ItemController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response create(ItemDto itemDto){
         Seller seller = sellerDao.findOne(itemDto.getSellerId());
         if (seller == null) {
@@ -38,6 +39,7 @@ public class ItemController {
         item.setName(itemDto.getName());
         item.setAmount(itemDto.getAmount());
         item.setPrice(itemDto.getPrice());
+        item.setDescription(itemDto.getDescription());
         item.setSeller(seller);
         itemDao.persist(item);
         return Response.ok(item.getId()).build();
@@ -55,6 +57,7 @@ public class ItemController {
         itemDto.setName(item.getName());
         itemDto.setAmount(item.getAmount());
         itemDto.setPrice(item.getPrice());
+        itemDto.setDescription(item.getDescription());
         itemDto.setSellerId(item.getSeller().getId());
         return Response.ok(itemDto).build();
     }
@@ -67,9 +70,11 @@ public class ItemController {
         List<ItemDto> itemDtos = new ArrayList<>();
         for(Item item:items){
             ItemDto itemDto = new ItemDto();
+            itemDto.setId(item.getId());
             itemDto.setName(item.getName());
             itemDto.setAmount(item.getAmount());
             itemDto.setPrice(item.getPrice());
+            itemDto.setDescription(item.getDescription());
             itemDto.setSellerId(item.getSeller().getId());
             itemDtos.add(itemDto);
         }
@@ -80,7 +85,6 @@ public class ItemController {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response update(@PathParam("id") Integer id, ItemDto itemDto){
         Item item = itemDao.findOne(id);
         if (item == null) {
@@ -93,6 +97,7 @@ public class ItemController {
         item.setName(itemDto.getName());
         item.setAmount(itemDto.getAmount());
         item.setPrice(itemDto.getPrice());
+        item.setDescription(itemDto.getDescription());
         item.setSeller(seller);
         itemDao.merge(item);
         return Response.ok(itemDto).build();
@@ -101,7 +106,6 @@ public class ItemController {
     @Path("/{id}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response delete(@PathParam("id") Integer id){
         Item item = itemDao.findOne(id);
         if (item == null) {
@@ -114,5 +118,46 @@ public class ItemController {
         itemDto.setSellerId(item.getSeller().getId());
         itemDao.remove(item);
         return Response.ok(itemDto).build();
+    }
+    @Path("/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response recommendItems(){
+        List<Item> recommendedItems = new ArrayList<>();
+        List<Integer> items = itemDao.findIds();
+        for (int i = 0; i < 2; i++){
+            Random random = new Random();
+            Item item = itemDao.findOne(random.nextInt(Collections.max(items)) + Collections.min(items));
+            recommendedItems.add(item);
+        }
+        List<ItemDto> itemDtos = new ArrayList<>();
+        for(Item item:recommendedItems){
+            ItemDto itemDto = new ItemDto();
+            itemDto.setId(item.getId());
+            itemDto.setName(item.getName());
+            itemDto.setAmount(item.getAmount());
+            itemDto.setPrice(item.getPrice());
+            itemDto.setDescription(item.getDescription());
+            itemDto.setSellerId(item.getSeller().getId());
+            itemDtos.add(itemDto);
+        }
+        return Response.ok(itemDtos).build();
+    }
+
+    @Path("/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response searchItems(String name){
+        List<Item> searchedItems = itemDao.findByName(name);
+        List<ItemDto> itemDtos = new ArrayList<>();
+        for(Item item:searchedItems){
+            ItemDto itemDto = new ItemDto();
+            itemDto.setId(item.getId());
+            itemDto.setName(item.getName());
+            itemDto.setAmount(item.getAmount());
+            itemDto.setPrice(item.getPrice());
+            itemDto.setDescription(item.getDescription());
+            itemDto.setSellerId(item.getSeller().getId());
+            itemDtos.add(itemDto);
+        }
+        return Response.ok(itemDtos).build();
     }
 }

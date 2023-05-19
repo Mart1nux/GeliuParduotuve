@@ -28,7 +28,6 @@ public class SellerController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response create(SellerDto sellerDto){
         Customer customer = customerDao.findOne(sellerDto.getCustomerId());
         if (customer == null) {
@@ -74,7 +73,6 @@ public class SellerController {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response update(@PathParam("id") Integer id, SellerDto sellerDto){
         Seller seller = sellerDao.findOne(id);
         if (seller == null) {
@@ -93,7 +91,6 @@ public class SellerController {
     @Path("/{id}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response delete(@PathParam("id") Integer id){
         Seller seller = sellerDao.findOne(id);
         if (seller == null) {

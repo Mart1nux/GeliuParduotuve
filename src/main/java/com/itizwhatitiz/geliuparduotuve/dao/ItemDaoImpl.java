@@ -5,9 +5,11 @@ import com.itizwhatitiz.geliuparduotuve.entity.Item;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @ApplicationScoped
+@Transactional
 public class ItemDaoImpl implements ItemDao{
     @PersistenceContext(unitName = "GeliuParduotuvePersistenceUnit")
     private EntityManager em;
@@ -20,6 +22,16 @@ public class ItemDaoImpl implements ItemDao{
     @Override
     public List<Item> findAll() {
         return em.createQuery("Select p from Item as p", Item.class).getResultList();
+    }
+
+    @Override
+    public List<Integer> findIds() {
+        return em.createQuery("Select p.id from Item as p").getResultList();
+    }
+
+    @Override
+    public List<Item> findByName(String name) {
+        return em.createQuery("Select p from Item as p where p.name like :itemName", Item.class).setParameter("itemName", name).getResultList();
     }
 
     @Override

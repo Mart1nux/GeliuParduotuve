@@ -16,6 +16,11 @@ public class Item {
 
     private Double price;
 
+    @Lob
+    private String description;
+
+    private String image;
+
     @ManyToOne
     @JoinColumn(name = "seller_id")
     private Seller seller;
@@ -55,6 +60,22 @@ public class Item {
         this.price = price;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     public Seller getSeller() {
         return seller;
     }
@@ -69,5 +90,10 @@ public class Item {
 
     public void setOrders(Set<Order> orders) {
         this.orders = orders;
+    }
+
+    @Override
+    public String toString() {
+        return id + " " + name + " " + price + " " + amount;
     }
 }

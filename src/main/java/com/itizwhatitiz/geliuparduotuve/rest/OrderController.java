@@ -28,7 +28,6 @@ public class OrderController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response create(OrderDto orderDto){
         Customer customer = customerDao.findOne(orderDto.getCustomerId());
         if (customer == null) {
@@ -77,7 +76,6 @@ public class OrderController {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response update(@PathParam("id") Integer id, OrderDto orderDto){
         Order order = orderDao.findOne(id);
         if (order == null) {
@@ -97,7 +95,6 @@ public class OrderController {
     @Path("/{id}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response delete(@PathParam("id") Integer id){
         Order order = orderDao.findOne(id);
         if (order == null) {
