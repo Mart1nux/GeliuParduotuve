@@ -1,6 +1,5 @@
 package com.itizwhatitiz.geliuparduotuve.rest;
 
-import com.itizwhatitiz.geliuparduotuve.businesslogic.Search;
 import com.itizwhatitiz.geliuparduotuve.dao.CustomerDao;
 import com.itizwhatitiz.geliuparduotuve.entity.Customer;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.CustomerDto;
@@ -21,14 +20,10 @@ public class CustomerController {
     @Inject
     CustomerDao customerDao;
 
-    @Inject
-    Search search;
-
     @Path("/")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response create(CustomerDto customerDto){
         Customer customer = new Customer();
         customer.setFirstname(customerDto.getFirstname());
@@ -80,7 +75,6 @@ public class CustomerController {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response update(@PathParam("id") Integer id, CustomerDto customerDto){
         Customer customer = customerDao.findOne(id);
         if (customer == null) {
@@ -98,7 +92,6 @@ public class CustomerController {
     @Path("/{id}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response delete(@PathParam("id") Integer id){
         Customer customer = customerDao.findOne(id);
         if (customer == null) {

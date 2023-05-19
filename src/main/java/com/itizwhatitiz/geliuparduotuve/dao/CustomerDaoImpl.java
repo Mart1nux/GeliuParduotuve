@@ -5,9 +5,11 @@ import com.itizwhatitiz.geliuparduotuve.entity.Customer;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @ApplicationScoped
+@Transactional
 public class CustomerDaoImpl implements CustomerDao{
     @PersistenceContext(unitName = "GeliuParduotuvePersistenceUnit")
     private EntityManager em;

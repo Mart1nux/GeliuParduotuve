@@ -23,7 +23,7 @@ public class Login implements Serializable {
                 if(username.equals(customer.getUsername()) && password.equals(customer.getPassword())){
                     if(customer.getRole() == "Seller"){
                         System.out.println("You have logged in as seller.");
-                        return;
+                        return; // token
                     }
                     System.out.println("You have logged in as customer.");
                     return;
