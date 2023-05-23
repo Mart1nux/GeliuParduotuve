@@ -1,8 +1,6 @@
 package com.itizwhatitiz.geliuparduotuve.rest.dto;
 
 public class ItemDto {
-    private Integer id;
-
     private Integer sellerId;
 
     private String name;
@@ -12,16 +10,6 @@ public class ItemDto {
     private Double price;
 
     private String description;
-
-    private String image;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Integer getSellerId() {
         return sellerId;
@@ -61,13 +49,5 @@ public class ItemDto {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 }
