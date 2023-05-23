@@ -39,6 +39,7 @@ public class ItemController {
         item.setAmount(itemDto.getAmount());
         item.setPrice(itemDto.getPrice());
         item.setSeller(seller);
+        item.setDescription(itemDto.getDescription());
         itemDao.persist(item);
         return Response.ok(item.getId()).build();
     }
@@ -56,6 +57,7 @@ public class ItemController {
         itemDto.setAmount(item.getAmount());
         itemDto.setPrice(item.getPrice());
         itemDto.setSellerId(item.getSeller().getId());
+        itemDto.setDescription(item.getDescription());
         return Response.ok(itemDto).build();
     }
 
@@ -71,6 +73,7 @@ public class ItemController {
             itemDto.setAmount(item.getAmount());
             itemDto.setPrice(item.getPrice());
             itemDto.setSellerId(item.getSeller().getId());
+            itemDto.setDescription(item.getDescription());
             itemDtos.add(itemDto);
         }
         return Response.ok(itemDtos).build();
@@ -94,6 +97,7 @@ public class ItemController {
         item.setAmount(itemDto.getAmount());
         item.setPrice(itemDto.getPrice());
         item.setSeller(seller);
+        item.setDescription(itemDto.getDescription());
         itemDao.merge(item);
         return Response.ok(itemDto).build();
     }

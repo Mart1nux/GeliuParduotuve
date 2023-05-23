@@ -16,6 +16,8 @@ public class Item {
 
     private Double price;
 
+    private String description;
+
     @ManyToOne
     @JoinColumn(name = "seller_id")
     private Seller seller;
@@ -69,5 +71,13 @@ public class Item {
 
     public void setOrders(Set<Order> orders) {
         this.orders = orders;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
