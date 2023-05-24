@@ -90,6 +90,40 @@ public class CustomerController {
     }
 
     @Path("/{id}")
+    @PATCH
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Response patch(@PathParam("id") Integer id, CustomerDto customerDto){
+        Customer customer = customerDao.findOne(id);
+        if (customer == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        if (customerDto.getFirstname() != null) {
+            customer.setFirstname(customerDto.getFirstname());
+        }
+
+        if (customerDto.getLastname() != null) {
+            customer.setLastname(customerDto.getLastname());
+        }
+
+        if (customerDto.getUsername() != null) {
+            customer.setUsername(customerDto.getUsername());
+        }
+
+        if (customerDto.getPassword() != null) {
+            customer.setPassword(customerDto.getPassword());
+        }
+
+        if (customerDto.getRole() != null) {
+            customer.setRole(customerDto.getRole());
+        }
+        customerDao.merge(customer);
+        return Response.ok(customerDto).build();
+    }
+
+    @Path("/{id}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional

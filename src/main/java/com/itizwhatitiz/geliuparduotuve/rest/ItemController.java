@@ -103,6 +103,45 @@ public class ItemController {
     }
 
     @Path("/{id}")
+    @PATCH
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Response patch(@PathParam("id") Integer id, ItemDto itemDto){
+        Item item = itemDao.findOne(id);
+        if (item == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        if (itemDto.getSellerId() != null) {
+            Seller seller = sellerDao.findOne(itemDto.getSellerId());
+            if (seller == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+            item.setSeller(seller);
+        }
+
+        if (itemDto.getName() != null) {
+            item.setName(itemDto.getName());
+        }
+
+        if (itemDto.getAmount() != null) {
+            item.setAmount(itemDto.getAmount());
+        }
+
+        if (itemDto.getPrice() != null) {
+            item.setPrice(itemDto.getPrice());
+        }
+
+        if (itemDto.getDescription() != null) {
+            item.setDescription(itemDto.getDescription());
+        }
+
+        itemDao.merge(item);
+        return Response.ok(itemDto).build();
+    }
+
+    @Path("/{id}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional

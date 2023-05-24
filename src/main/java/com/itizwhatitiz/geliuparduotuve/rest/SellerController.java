@@ -91,6 +91,33 @@ public class SellerController {
     }
 
     @Path("/{id}")
+    @PATCH
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Response patch(@PathParam("id") Integer id, SellerDto sellerDto){
+        Seller seller = sellerDao.findOne(id);
+        if (seller == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        if (sellerDto.getCustomerId() != null) {
+            Customer customer = customerDao.findOne(sellerDto.getCustomerId());
+            if (customer == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+            seller.setCustomer(customer);
+        }
+
+        if (sellerDto.getSellerCode() != null) {
+            seller.setSellerCode(sellerDto.getSellerCode());
+        }
+
+        sellerDao.merge(seller);
+        return Response.ok(sellerDto).build();
+    }
+
+    @Path("/{id}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
