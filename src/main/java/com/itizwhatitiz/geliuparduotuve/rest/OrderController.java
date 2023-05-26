@@ -93,6 +93,39 @@ public class OrderController {
     }
 
     @Path("/{id}")
+    @PATCH
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Response patch(@PathParam("id") Integer id, OrderDto orderDto){
+        Order order = orderDao.findOne(id);
+        if (order == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        if (orderDto.getCustomerId() != null) {
+            Customer customer = customerDao.findOne(orderDto.getCustomerId());
+
+            if (customer == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+            order.setCustomer(customer);
+        }
+
+        if (orderDto.getOrderCreateDate() != null) {
+            order.setOrderCreateDate(orderDto.getOrderCreateDate());
+        }
+
+        if (orderDto.getOrderStatus() != null) {
+            order.setOrderStatus(orderDto.getOrderStatus());
+        }
+
+
+        orderDao.merge(order);
+        return Response.ok(orderDto).build();
+    }
+
+    @Path("/{id}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(@PathParam("id") Integer id){

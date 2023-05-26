@@ -40,6 +40,7 @@ public class ItemController {
         item.setPrice(itemDto.getPrice());
         item.setDescription(itemDto.getDescription());
         item.setSeller(seller);
+        item.setDescription(itemDto.getDescription());
         item.setImage(itemDto.getImage());
         itemDao.persist(item);
         return Response.ok(item.getId()).build();
@@ -59,6 +60,7 @@ public class ItemController {
         itemDto.setPrice(item.getPrice());
         itemDto.setDescription(item.getDescription());
         itemDto.setSellerId(item.getSeller().getId());
+        itemDto.setDescription(item.getDescription());
         itemDto.setImage(item.getImage());
         return Response.ok(itemDto).build();
     }
@@ -77,6 +79,7 @@ public class ItemController {
             itemDto.setPrice(item.getPrice());
             itemDto.setDescription(item.getDescription());
             itemDto.setSellerId(item.getSeller().getId());
+            itemDto.setDescription(item.getDescription());
             itemDto.setImage(item.getImage());
             itemDtos.add(itemDto);
         }
@@ -101,6 +104,45 @@ public class ItemController {
         item.setPrice(itemDto.getPrice());
         item.setDescription(itemDto.getDescription());
         item.setSeller(seller);
+        item.setDescription(itemDto.getDescription());
+        itemDao.merge(item);
+        return Response.ok(itemDto).build();
+    }
+
+    @Path("/{id}")
+    @PATCH
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response patch(@PathParam("id") Integer id, ItemDto itemDto){
+        Item item = itemDao.findOne(id);
+        if (item == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        if (itemDto.getSellerId() != null) {
+            Seller seller = sellerDao.findOne(itemDto.getSellerId());
+            if (seller == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+            item.setSeller(seller);
+        }
+
+        if (itemDto.getName() != null) {
+            item.setName(itemDto.getName());
+        }
+
+        if (itemDto.getAmount() != null) {
+            item.setAmount(itemDto.getAmount());
+        }
+
+        if (itemDto.getPrice() != null) {
+            item.setPrice(itemDto.getPrice());
+        }
+
+        if (itemDto.getDescription() != null) {
+            item.setDescription(itemDto.getDescription());
+        }
+
         item.setImage(itemDto.getImage());
         itemDao.merge(item);
         return Response.ok(itemDto).build();
