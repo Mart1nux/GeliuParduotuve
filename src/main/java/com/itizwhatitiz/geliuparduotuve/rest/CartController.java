@@ -1,14 +1,11 @@
 package com.itizwhatitiz.geliuparduotuve.rest;
 
-import com.itizwhatitiz.geliuparduotuve.dao.CartItemDao;
-import com.itizwhatitiz.geliuparduotuve.dao.ItemDao;
-import com.itizwhatitiz.geliuparduotuve.dao.CustomerDao;
-import com.itizwhatitiz.geliuparduotuve.entity.CartItem;
-import com.itizwhatitiz.geliuparduotuve.entity.Item;
-import com.itizwhatitiz.geliuparduotuve.entity.Customer;
+import com.itizwhatitiz.geliuparduotuve.dao.*;
+import com.itizwhatitiz.geliuparduotuve.entity.*;
 import com.itizwhatitiz.geliuparduotuve.logger.Logger;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.CartItemDto;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.GenericDto;
+import com.itizwhatitiz.geliuparduotuve.rest.dto.OrderedItemDto;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -25,12 +22,17 @@ import java.util.List;
 public class CartController extends GenericController {
     @Inject
     ItemDao itemDao;
+    @Inject
+    OrderDao orderDao;
 
     @Inject
     CustomerDao customerDao;
 
     @Inject
     CartItemDao cartItemDao;
+
+    @Inject
+    OrderedItemDao orderedItemDao;
 
     @Path("/")
     @POST
@@ -61,6 +63,55 @@ public class CartController extends GenericController {
         cartItem.setCustomer(customer);
         cartItemDao.persist(cartItem);
         return Response.ok(cartItem.getId()).build();
+    }
+
+    @Path("/customer/{user_id}/toOrder/{order_id}")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Response create(GenericDto dto, @PathParam("user_id") Integer userId, @PathParam("order_id") Integer orderId){
+        if (!VerifyIfCallerExists(dto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
+        Order order = orderDao.findOne(orderId);
+        if (order == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        Customer customer = customerDao.findOne(userId);
+        if (customer == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        if (!VerifyIfCallerIs(dto, order.getCustomer().getId()) && (!VerifyIfCallerIs(dto, customer.getId()) && !GetCallerRole(dto).equals("Seller"))) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
+        List<CartItem> cartItems = cartItemDao.findByCustomer(userId);
+        List<OrderedItemDto> orderedItemDtos = new ArrayList<>();
+        for(CartItem cartItem:cartItems) {
+            Item item = itemDao.findOne(cartItem.getItem().getId());
+            if (item == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+
+            OrderedItem orderedItem = new OrderedItem();
+            orderedItem.setAmount(cartItem.getAmount());
+            orderedItem.setItem(item);
+            orderedItem.setOrder(order);
+            orderedItemDao.persist(orderedItem);
+            cartItemDao.remove(cartItem);
+
+            OrderedItemDto orderedItemDto = new OrderedItemDto();
+            orderedItemDto.setAmount(orderedItem.getAmount());
+            orderedItemDto.setItemId(orderedItem.getItem().getId());
+            orderedItemDto.setOrderId(orderedItem.getOrder().getId());
+            orderedItemDtos.add(orderedItemDto);
+        }
+
+        return Response.ok(orderedItemDtos).build();
     }
 
     @Path("/{id}")
@@ -202,7 +253,7 @@ public class CartController extends GenericController {
         if (cartItem == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        if (!VerifyIfCallerIs(dto, id)) {
+        if (!VerifyIfCallerIs(dto, cartItem.getCustomer().getId())) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 

@@ -2,8 +2,10 @@ package com.itizwhatitiz.geliuparduotuve.rest;
 
 import com.itizwhatitiz.geliuparduotuve.dao.CustomerDao;
 import com.itizwhatitiz.geliuparduotuve.dao.OrderDao;
+import com.itizwhatitiz.geliuparduotuve.dao.OrderedItemDao;
 import com.itizwhatitiz.geliuparduotuve.entity.Customer;
 import com.itizwhatitiz.geliuparduotuve.entity.Order;
+import com.itizwhatitiz.geliuparduotuve.entity.OrderedItem;
 import com.itizwhatitiz.geliuparduotuve.logger.Logger;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.GenericDto;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.OrderDto;
@@ -20,12 +22,16 @@ import java.util.List;
 @ApplicationScoped
 @Path("/orders")
 @Logger
+@Transactional
 public class OrderController extends GenericController {
     @Inject
     CustomerDao customerDao;
 
     @Inject
     OrderDao orderDao;
+
+    @Inject
+    OrderedItemDao orderedItemDao;
 
     @Path("/")
     @POST
@@ -35,7 +41,7 @@ public class OrderController extends GenericController {
         if (!VerifyIfCallerExists(orderDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        else if (!VerifyIfCallerIs(orderDto, orderDto.getCustomerId())) {
+        else if (!VerifyIfCallerIs(orderDto, orderDto.getCustomerId()) && !GetCallerRole(orderDto).equals("Seller")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
@@ -182,6 +188,11 @@ public class OrderController extends GenericController {
 
         if (!VerifyIfCallerIs(dto, order.getCustomer().getId()) && !GetCallerRole(dto).equals("Seller")) {
             return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
+        List<OrderedItem> orderedItems = orderedItemDao.findByOrder(id);
+        for (OrderedItem orderedItem : orderedItems) {
+            orderedItemDao.remove(orderedItem);
         }
 
         OrderDto orderDto = new OrderDto();

@@ -28,6 +28,6 @@ public class GenericController {
     public Boolean VerifyIfCallerIs(GenericDto dto, Integer id) {
         Customer caller = customerDao.findOne(dto.getCallerId());
 
-        return !caller.getId().equals(id);
+        return caller.getId().equals(id);
     }
 }
