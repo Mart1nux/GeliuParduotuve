@@ -5,6 +5,7 @@ import com.itizwhatitiz.geliuparduotuve.entity.Customer;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.CustomerDto;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.util.Nonbinding;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
@@ -23,7 +24,6 @@ public class CustomerController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response create(CustomerDto customerDto){
         Customer customer = new Customer();
         customer.setFirstname(customerDto.getFirstname());
@@ -67,6 +67,7 @@ public class CustomerController {
             customerDto.setRole(customer.getRole());
             customerDtos.add(customerDto);
         }
+        //System.out.println(search.recommendItems());
         return Response.ok(customerDtos).build();
     }
 
@@ -74,7 +75,6 @@ public class CustomerController {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response update(@PathParam("id") Integer id, CustomerDto customerDto){
         Customer customer = customerDao.findOne(id);
         if (customer == null) {
@@ -126,7 +126,6 @@ public class CustomerController {
     @Path("/{id}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response delete(@PathParam("id") Integer id){
         Customer customer = customerDao.findOne(id);
         if (customer == null) {

@@ -14,6 +14,8 @@ public class Order {
 
     private String orderStatus;
 
+    private String pickupLocation;
+
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
@@ -43,6 +45,14 @@ public class Order {
 
     public void setOrderStatus(String orderStatus) {
         this.orderStatus = orderStatus;
+    }
+
+    public String getPickupLocation() {
+        return pickupLocation;
+    }
+
+    public void setPickupLocation(String pickupLocation) {
+        this.pickupLocation = pickupLocation;
     }
 
     public Customer getCustomer() {
