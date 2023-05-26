@@ -97,7 +97,7 @@ public class ItemController {
         item.setAmount(itemDto.getAmount());
         item.setPrice(itemDto.getPrice());
         item.setSeller(seller);
-        item.setDescription(itemDto.getDescription());
+        item.setImage(itemDto.getImage());
         itemDao.merge(item);
         return Response.ok(itemDto).build();
     }
