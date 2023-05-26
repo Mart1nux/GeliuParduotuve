@@ -4,6 +4,8 @@ import com.itizwhatitiz.geliuparduotuve.dao.CustomerDao;
 import com.itizwhatitiz.geliuparduotuve.dao.OrderDao;
 import com.itizwhatitiz.geliuparduotuve.entity.Customer;
 import com.itizwhatitiz.geliuparduotuve.entity.Order;
+import com.itizwhatitiz.geliuparduotuve.logger.Logger;
+import com.itizwhatitiz.geliuparduotuve.rest.dto.GenericDto;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.OrderDto;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -17,6 +19,7 @@ import java.util.List;
 
 @ApplicationScoped
 @Path("/orders")
+@Logger
 public class OrderController {
     @Inject
     CustomerDao customerDao;
@@ -44,7 +47,7 @@ public class OrderController {
     @Path("/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findOne(@PathParam("id") Integer id){
+    public Response findOne(@PathParam("id") Integer id, GenericDto dto){
         Order order = orderDao.findOne(id);
         if (order == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -59,7 +62,7 @@ public class OrderController {
     @Path("/")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findAll(){
+    public Response findAll(GenericDto dto){
         List<Order> orders = orderDao.findAll();
         List<OrderDto> orderDtos = new ArrayList<>();
         for(Order order:orders){
@@ -128,7 +131,7 @@ public class OrderController {
     @Path("/{id}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("id") Integer id){
+    public Response delete(@PathParam("id") Integer id, GenericDto dto){
         Order order = orderDao.findOne(id);
         if (order == null) {
             return Response.status(Response.Status.NOT_FOUND).build();

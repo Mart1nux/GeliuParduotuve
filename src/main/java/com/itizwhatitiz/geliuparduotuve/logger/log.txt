@@ -1,0 +1,85 @@
+Called class java.lang.reflect.Method.findByCustomer
+Called class java.lang.reflect.Method.findByCustomer
+Called java.lang.reflect.Method.findByCustomer
+Called com.itizwhatitiz.geliuparduotuve.rest.CartController.findByCustomer
+Called CartController.findByCustomer
+[2023-05-26T18:12:51.441408488]Called CartController.findByCustomer
+[2023-05-26T18:18:57.678311084] {[Ljava.lang.reflect.Parameter;@47896e58} called CartController.findByCustomer
+[2023-05-26T18:27:19.120313621] called CartController.findByCustomer
+{arg0 = class java.lang.Integer}
+[2023-05-26T19:27:11.986280494] called CustomerController.findAll
+
+[2023-05-26T19:31:21.504041655] called CustomerController.findAll
+
+[2023-05-26T19:46:25.490412241] called CartController.create
+[2023-05-26T19:47:31.540002418] called CartController.create
+[2023-05-26T19:48:50.359149235] called OrderController.patch
+1[2023-05-26T19:50:32.582827518] called OrderController.create
+[2023-05-26T19:51:17.782624745] called OrderController.patch
+2
+[2023-05-26T20:27:33.372820270]
+    User invalid or not logged in
+    called OrderController.patch
+[2023-05-26T20:28:38.395430225]
+User invalid or not logged in
+    called OrderController.patch
+[2023-05-26T20:29:24.338839785]
+    User invalid or not logged in
+    called OrderController.patch
+[2023-05-26T20:29:46.731036006]
+    User test2 (role: customer)
+    called OrderController.patch
+[2023-05-26T20:30:49.755778404]
+    User invalid or not logged in
+    called ItemController.findOne
+[2023-05-26T20:31:13.468120447]
+    User test2 (role: customer)
+    called ItemController.findOne
+[2023-05-26T20:31:23.990931568]
+    User test5 (role: seller)
+    called ItemController.findOne
+[2023-05-26T20:31:34.559906212]
+    User test2 (role: customer)
+    called ItemController.findOne
+[2023-05-26T20:31:41.798580236]
+    User invalid or not logged in
+    called ItemController.findOne
+[2023-05-26T20:32:04.067855487]
+    User invalid or not logged in
+    called ItemController.findOne
+[2023-05-26T20:32:15.452783903]
+    User saturn (role: ZOOM)
+    called ItemController.patch
+[2023-05-26T20:32:19.210360944]
+    User saturn (role: ZOOM)
+    called ItemController.findOne
+[2023-05-26T20:33:18.159180634]
+    User invalid or not logged in
+    called ItemController.patch
+[2023-05-26T20:34:35.202356095]
+    User invalid or not logged in
+    called ItemController.patch
+[2023-05-26T20:35:10.762603639]
+    User saturn (role: ZOOM)
+    called ItemController.patch
+[2023-05-26T20:35:17.028467528]
+    User saturn (role: ZOOM)
+    called ItemController.findOne
+[2023-05-26T20:37:04.718672646]
+    User saturn (role: ZOOM)
+    called ItemController.findAll
+[2023-05-26T20:37:42.518650791]
+    User saturn (role: ZOOM)
+    called ItemController.findAll
+[2023-05-26T20:37:50.366340751]
+    User saturn (role: ZOOM)
+    called ItemController.findAll
+[2023-05-26T20:38:54.009963510]
+    User saturn (role: ZOOM)
+    called ItemController.findAll
+[2023-05-26T20:39:00.951445937]
+    User saturn (role: ZOOM)
+    called ItemController.findAll
+[2023-05-26T20:49:06.652438906]
+    User saturn (role: ZOOM)
+    called ItemController.findAll

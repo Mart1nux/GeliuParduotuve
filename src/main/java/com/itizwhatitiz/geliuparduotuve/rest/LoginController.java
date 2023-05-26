@@ -2,6 +2,7 @@ package com.itizwhatitiz.geliuparduotuve.rest;
 
 import com.itizwhatitiz.geliuparduotuve.dao.CustomerDao;
 import com.itizwhatitiz.geliuparduotuve.entity.Customer;
+import com.itizwhatitiz.geliuparduotuve.logger.Logger;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.CustomerDto;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.LoginDto;
 
@@ -15,6 +16,7 @@ import java.util.concurrent.CompletableFuture;
 
 @ApplicationScoped
 @Path("/login")
+@Logger
 public class LoginController {
     @Inject
     CustomerDao customerDao;

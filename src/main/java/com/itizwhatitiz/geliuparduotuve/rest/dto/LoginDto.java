@@ -1,6 +1,6 @@
 package com.itizwhatitiz.geliuparduotuve.rest.dto;
 
-public class LoginDto {
+public class LoginDto extends GenericDto {
     private String username;
 
     private String password;

@@ -4,6 +4,8 @@ import com.itizwhatitiz.geliuparduotuve.dao.CustomerDao;
 import com.itizwhatitiz.geliuparduotuve.dao.SellerDao;
 import com.itizwhatitiz.geliuparduotuve.entity.Customer;
 import com.itizwhatitiz.geliuparduotuve.entity.Seller;
+import com.itizwhatitiz.geliuparduotuve.logger.Logger;
+import com.itizwhatitiz.geliuparduotuve.rest.dto.GenericDto;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.SellerDto;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -17,6 +19,7 @@ import java.util.List;
 
 @ApplicationScoped
 @Path("/sellers")
+@Logger
 public class SellerController {
     @Inject
     CustomerDao customerDao;
@@ -43,7 +46,7 @@ public class SellerController {
     @Path("/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findOne(@PathParam("id") Integer id){
+    public Response findOne(@PathParam("id") Integer id, GenericDto dto){
         Seller seller = sellerDao.findOne(id);
         if (seller == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -57,7 +60,7 @@ public class SellerController {
     @Path("/")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findAll(){
+    public Response findAll(GenericDto dto){
         List<Seller> sellers = sellerDao.findAll();
         List<SellerDto> sellerDtos = new ArrayList<>();
         for(Seller seller:sellers){
@@ -118,7 +121,7 @@ public class SellerController {
     @Path("/{id}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("id") Integer id){
+    public Response delete(@PathParam("id") Integer id, GenericDto dto){
         Seller seller = sellerDao.findOne(id);
         if (seller == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
