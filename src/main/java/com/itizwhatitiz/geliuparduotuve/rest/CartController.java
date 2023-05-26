@@ -22,7 +22,7 @@ import java.util.List;
 @ApplicationScoped
 @Path("/cart")
 @Logger
-public class CartController {
+public class CartController extends GenericController {
     @Inject
     ItemDao itemDao;
 
@@ -38,6 +38,13 @@ public class CartController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response create(CartItemDto cartItemDto){
+        if (!VerifyIfCallerExists(cartItemDto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!VerifyIfCallerIs(cartItemDto, cartItemDto.getCustomerId())) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         Item item = itemDao.findOne(cartItemDto.getItemId());
         if (item == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -60,9 +67,17 @@ public class CartController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findOne(@PathParam("id") Integer id, GenericDto dto){
+        if (!VerifyIfCallerExists(dto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
         CartItem cartItem = cartItemDao.findOne(id);
         if (cartItem == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        if (!VerifyIfCallerIs(dto, cartItem.getCustomer().getId())) {
+            return Response.status(Response.Status.FORBIDDEN).build();
         }
 
         CartItemDto cartItemDto = new CartItemDto();
@@ -72,26 +87,17 @@ public class CartController {
         return Response.ok(cartItemDto).build();
     }
 
-    @Path("/")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response findAll(GenericDto dto){
-        List<CartItem> cartItems = cartItemDao.findAll();
-        List<CartItemDto> cartItemDtos = new ArrayList<>();
-        for(CartItem cartItem:cartItems){
-            CartItemDto cartItemDto = new CartItemDto();
-            cartItemDto.setAmount(cartItem.getAmount());
-            cartItemDto.setItemId(cartItem.getItem().getId());
-            cartItemDto.setCustomerId(cartItem.getCustomer().getId());
-            cartItemDtos.add(cartItemDto);
-        }
-        return Response.ok(cartItemDtos).build();
-    }
-
     @Path("/customer/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findByCustomer(@PathParam("id") Integer id, GenericDto dto){
+        if (!VerifyIfCallerExists(dto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!VerifyIfCallerIs(dto, id)) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         List<CartItem> cartItems = cartItemDao.findByCustomer(id);
         List<CartItemDto> cartItemDtos = new ArrayList<>();
         for(CartItem cartItem:cartItems){
@@ -110,9 +116,17 @@ public class CartController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response update(@PathParam("id") Integer id, CartItemDto cartItemDto){
+        if (!VerifyIfCallerExists(cartItemDto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
         CartItem cartItem = cartItemDao.findOne(id);
         if (cartItem == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        if (!VerifyIfCallerIs(cartItemDto, cartItem.getCustomer().getId())) {
+            return Response.status(Response.Status.FORBIDDEN).build();
         }
 
         Item item = itemDao.findOne(cartItemDto.getItemId());
@@ -138,9 +152,17 @@ public class CartController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response patch(@PathParam("id") Integer id, CartItemDto cartItemDto){
+        if (!VerifyIfCallerExists(cartItemDto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
         CartItem cartItem = cartItemDao.findOne(id);
         if (cartItem == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        if (!VerifyIfCallerIs(cartItemDto, cartItem.getCustomer().getId())) {
+            return Response.status(Response.Status.FORBIDDEN).build();
         }
 
         if (cartItemDto.getItemId() != null) {
@@ -171,10 +193,19 @@ public class CartController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response delete(@PathParam("id") Integer id, GenericDto dto){
+        if (!VerifyIfCallerExists(dto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
+
         CartItem cartItem = cartItemDao.findOne(id);
         if (cartItem == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+        if (!VerifyIfCallerIs(dto, id)) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         CartItemDto cartItemDto = new CartItemDto();
         cartItemDto.setAmount(cartItem.getAmount());
         cartItemDto.setItemId(cartItem.getItem().getId());

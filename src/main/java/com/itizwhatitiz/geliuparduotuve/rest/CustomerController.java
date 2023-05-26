@@ -7,7 +7,6 @@ import com.itizwhatitiz.geliuparduotuve.rest.dto.CustomerDto;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.GenericDto;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.util.Nonbinding;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
@@ -19,7 +18,7 @@ import java.util.List;
 @ApplicationScoped
 @Path("/customers")
 @Logger
-public class CustomerController {
+public class CustomerController extends GenericController {
     @Inject
     CustomerDao customerDao;
 
@@ -42,6 +41,13 @@ public class CustomerController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findOne(@PathParam("id") Integer id, GenericDto dto){
+        if (!VerifyIfCallerExists(dto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!VerifyIfCallerIs(dto, id) && !GetCallerRole(dto).equals("Manager")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         Customer customer = customerDao.findOne(id);
         if (customer == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -59,6 +65,13 @@ public class CustomerController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll(GenericDto dto){
+        if (!VerifyIfCallerExists(dto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!GetCallerRole(dto).equals("Manager")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         List<Customer> customers = customerDao.findAll();
         List<CustomerDto> customerDtos = new ArrayList<>();
         for(Customer customer:customers){
@@ -79,6 +92,13 @@ public class CustomerController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") Integer id, CustomerDto customerDto){
+        if (!VerifyIfCallerExists(customerDto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!VerifyIfCallerIs(customerDto, id) && !GetCallerRole(customerDto).equals("Manager")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         Customer customer = customerDao.findOne(id);
         if (customer == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -98,6 +118,13 @@ public class CustomerController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response patch(@PathParam("id") Integer id, CustomerDto customerDto){
+        if (!VerifyIfCallerExists(customerDto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!VerifyIfCallerIs(customerDto, id) && !GetCallerRole(customerDto).equals("Manager")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         Customer customer = customerDao.findOne(id);
         if (customer == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -130,6 +157,13 @@ public class CustomerController {
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(@PathParam("id") Integer id, GenericDto dto){
+        if (!VerifyIfCallerExists(dto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!VerifyIfCallerIs(dto, id) && !GetCallerRole(dto).equals("Manager")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         Customer customer = customerDao.findOne(id);
         if (customer == null) {
             return Response.status(Response.Status.NOT_FOUND).build();

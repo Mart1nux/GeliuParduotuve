@@ -20,7 +20,7 @@ import java.util.List;
 @ApplicationScoped
 @Path("/sellers")
 @Logger
-public class SellerController {
+public class SellerController extends GenericController {
     @Inject
     CustomerDao customerDao;
 
@@ -32,6 +32,13 @@ public class SellerController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(SellerDto sellerDto){
+        if (!VerifyIfCallerExists(sellerDto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!GetCallerRole(sellerDto).equals("Manager")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         Customer customer = customerDao.findOne(sellerDto.getCustomerId());
         if (customer == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -47,6 +54,13 @@ public class SellerController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findOne(@PathParam("id") Integer id, GenericDto dto){
+        if (!VerifyIfCallerExists(dto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!GetCallerRole(dto).equals("Manager")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         Seller seller = sellerDao.findOne(id);
         if (seller == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -61,6 +75,13 @@ public class SellerController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll(GenericDto dto){
+        if (!VerifyIfCallerExists(dto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!GetCallerRole(dto).equals("Manager")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         List<Seller> sellers = sellerDao.findAll();
         List<SellerDto> sellerDtos = new ArrayList<>();
         for(Seller seller:sellers){
@@ -77,6 +98,13 @@ public class SellerController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") Integer id, SellerDto sellerDto){
+        if (!VerifyIfCallerExists(sellerDto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!GetCallerRole(sellerDto).equals("Manager")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         Seller seller = sellerDao.findOne(id);
         if (seller == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -97,6 +125,13 @@ public class SellerController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response patch(@PathParam("id") Integer id, SellerDto sellerDto){
+        if (!VerifyIfCallerExists(sellerDto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!GetCallerRole(sellerDto).equals("Manager")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         Seller seller = sellerDao.findOne(id);
         if (seller == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -122,6 +157,13 @@ public class SellerController {
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(@PathParam("id") Integer id, GenericDto dto){
+        if (!VerifyIfCallerExists(dto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!GetCallerRole(dto).equals("Manager")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         Seller seller = sellerDao.findOne(id);
         if (seller == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
