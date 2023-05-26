@@ -13,6 +13,8 @@ public class ItemDto {
 
     private String description;
 
+    private String image;
+
     public Integer getId() {
         return id;
     }
@@ -59,5 +61,13 @@ public class ItemDto {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

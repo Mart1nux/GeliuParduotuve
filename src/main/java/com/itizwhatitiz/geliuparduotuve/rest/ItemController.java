@@ -8,7 +8,6 @@ import com.itizwhatitiz.geliuparduotuve.rest.dto.ItemDto;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -41,6 +40,7 @@ public class ItemController {
         item.setPrice(itemDto.getPrice());
         item.setDescription(itemDto.getDescription());
         item.setSeller(seller);
+        item.setImage(itemDto.getImage());
         itemDao.persist(item);
         return Response.ok(item.getId()).build();
     }
@@ -59,6 +59,7 @@ public class ItemController {
         itemDto.setPrice(item.getPrice());
         itemDto.setDescription(item.getDescription());
         itemDto.setSellerId(item.getSeller().getId());
+        itemDto.setImage(item.getImage());
         return Response.ok(itemDto).build();
     }
 
@@ -76,6 +77,7 @@ public class ItemController {
             itemDto.setPrice(item.getPrice());
             itemDto.setDescription(item.getDescription());
             itemDto.setSellerId(item.getSeller().getId());
+            itemDto.setImage(item.getImage());
             itemDtos.add(itemDto);
         }
         return Response.ok(itemDtos).build();
@@ -99,6 +101,7 @@ public class ItemController {
         item.setPrice(itemDto.getPrice());
         item.setDescription(itemDto.getDescription());
         item.setSeller(seller);
+        item.setImage(itemDto.getImage());
         itemDao.merge(item);
         return Response.ok(itemDto).build();
     }
@@ -116,10 +119,12 @@ public class ItemController {
         itemDto.setAmount(item.getAmount());
         itemDto.setPrice(item.getPrice());
         itemDto.setSellerId(item.getSeller().getId());
+        itemDto.setImage(item.getImage());
         itemDao.remove(item);
         return Response.ok(itemDto).build();
     }
-    @Path("/")
+    @Path("/recommendItems")
+    @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response recommendItems(){
         List<Item> recommendedItems = new ArrayList<>();
@@ -138,15 +143,18 @@ public class ItemController {
             itemDto.setPrice(item.getPrice());
             itemDto.setDescription(item.getDescription());
             itemDto.setSellerId(item.getSeller().getId());
+            itemDto.setImage(item.getImage());
             itemDtos.add(itemDto);
         }
         return Response.ok(itemDtos).build();
     }
 
-    @Path("/")
+    @Path("/search")
+    @GET
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response searchItems(String name){
-        List<Item> searchedItems = itemDao.findByName(name);
+    public Response searchItems(ItemDto name){
+        List<Item> searchedItems = itemDao.findByName(name.getName());
         List<ItemDto> itemDtos = new ArrayList<>();
         for(Item item:searchedItems){
             ItemDto itemDto = new ItemDto();
@@ -156,6 +164,7 @@ public class ItemController {
             itemDto.setPrice(item.getPrice());
             itemDto.setDescription(item.getDescription());
             itemDto.setSellerId(item.getSeller().getId());
+            itemDto.setImage(item.getImage());
             itemDtos.add(itemDto);
         }
         return Response.ok(itemDtos).build();
