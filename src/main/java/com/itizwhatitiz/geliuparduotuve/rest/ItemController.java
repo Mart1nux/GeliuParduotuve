@@ -21,7 +21,7 @@ import java.util.Random;
 @ApplicationScoped
 @Path("/items")
 @Logger
-public class ItemController {
+public class ItemController extends GenericController {
     @Inject
     SellerDao sellerDao;
 
@@ -33,6 +33,13 @@ public class ItemController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(ItemDto itemDto){
+        if (!VerifyIfCallerExists(itemDto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!GetCallerRole(itemDto).equals("Manager") && !GetCallerRole(itemDto).equals("Seller")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         Seller seller = sellerDao.findOne(itemDto.getSellerId());
         if (seller == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -94,6 +101,13 @@ public class ItemController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") Integer id, ItemDto itemDto){
+        if (!VerifyIfCallerExists(itemDto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!GetCallerRole(itemDto).equals("Manager") && !GetCallerRole(itemDto).equals("Seller")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         Item item = itemDao.findOne(id);
         if (item == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -117,6 +131,13 @@ public class ItemController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response patch(@PathParam("id") Integer id, ItemDto itemDto){
+        if (!VerifyIfCallerExists(itemDto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!GetCallerRole(itemDto).equals("Manager") && !GetCallerRole(itemDto).equals("Seller")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         Item item = itemDao.findOne(id);
         if (item == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -155,6 +176,13 @@ public class ItemController {
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(@PathParam("id") Integer id, GenericDto dto){
+        if (!VerifyIfCallerExists(dto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!GetCallerRole(dto).equals("Manager") && !GetCallerRole(dto).equals("Seller")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         Item item = itemDao.findOne(id);
         if (item == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
