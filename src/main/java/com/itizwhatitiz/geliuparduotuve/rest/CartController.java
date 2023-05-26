@@ -6,7 +6,9 @@ import com.itizwhatitiz.geliuparduotuve.dao.CustomerDao;
 import com.itizwhatitiz.geliuparduotuve.entity.CartItem;
 import com.itizwhatitiz.geliuparduotuve.entity.Item;
 import com.itizwhatitiz.geliuparduotuve.entity.Customer;
+import com.itizwhatitiz.geliuparduotuve.logger.Logger;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.CartItemDto;
+import com.itizwhatitiz.geliuparduotuve.rest.dto.GenericDto;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -19,6 +21,7 @@ import java.util.List;
 
 @ApplicationScoped
 @Path("/cart")
+@Logger
 public class CartController {
     @Inject
     ItemDao itemDao;
@@ -56,7 +59,7 @@ public class CartController {
     @Path("/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findOne(@PathParam("id") Integer id){
+    public Response findOne(@PathParam("id") Integer id, GenericDto dto){
         CartItem cartItem = cartItemDao.findOne(id);
         if (cartItem == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -72,7 +75,7 @@ public class CartController {
     @Path("/")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findAll(){
+    public Response findAll(GenericDto dto){
         List<CartItem> cartItems = cartItemDao.findAll();
         List<CartItemDto> cartItemDtos = new ArrayList<>();
         for(CartItem cartItem:cartItems){
@@ -88,7 +91,7 @@ public class CartController {
     @Path("/customer/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findByCustomer(@PathParam("id") Integer id){
+    public Response findByCustomer(@PathParam("id") Integer id, GenericDto dto){
         List<CartItem> cartItems = cartItemDao.findByCustomer(id);
         List<CartItemDto> cartItemDtos = new ArrayList<>();
         for(CartItem cartItem:cartItems){
@@ -167,7 +170,7 @@ public class CartController {
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response delete(@PathParam("id") Integer id){
+    public Response delete(@PathParam("id") Integer id, GenericDto dto){
         CartItem cartItem = cartItemDao.findOne(id);
         if (cartItem == null) {
             return Response.status(Response.Status.NOT_FOUND).build();

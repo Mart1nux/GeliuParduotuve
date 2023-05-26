@@ -1,6 +1,6 @@
 package com.itizwhatitiz.geliuparduotuve.rest.dto;
 
-public class OrderDto {
+public class OrderDto extends GenericDto {
     private Integer customerId;
 
     private String orderCreateDate;

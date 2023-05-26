@@ -4,6 +4,8 @@ import com.itizwhatitiz.geliuparduotuve.dao.ItemDao;
 import com.itizwhatitiz.geliuparduotuve.dao.SellerDao;
 import com.itizwhatitiz.geliuparduotuve.entity.Item;
 import com.itizwhatitiz.geliuparduotuve.entity.Seller;
+import com.itizwhatitiz.geliuparduotuve.logger.Logger;
+import com.itizwhatitiz.geliuparduotuve.rest.dto.GenericDto;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.ItemDto;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -18,6 +20,7 @@ import java.util.Random;
 
 @ApplicationScoped
 @Path("/items")
+@Logger
 public class ItemController {
     @Inject
     SellerDao sellerDao;
@@ -49,7 +52,7 @@ public class ItemController {
     @Path("/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findOne(@PathParam("id") Integer id){
+    public Response findOne(@PathParam("id") Integer id, GenericDto dto){
         Item item = itemDao.findOne(id);
         if (item == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -68,7 +71,7 @@ public class ItemController {
     @Path("/")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findAll(){
+    public Response findAll(GenericDto dto){
         List<Item> items = itemDao.findAll();
         List<ItemDto> itemDtos = new ArrayList<>();
         for(Item item:items){
@@ -151,7 +154,7 @@ public class ItemController {
     @Path("/{id}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("id") Integer id){
+    public Response delete(@PathParam("id") Integer id, GenericDto dto){
         Item item = itemDao.findOne(id);
         if (item == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -168,7 +171,7 @@ public class ItemController {
     @Path("/recommendItems")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response recommendItems(){
+    public Response recommendItems(GenericDto dto){
         List<Item> recommendedItems = new ArrayList<>();
         List<Integer> items = itemDao.findIds();
         for (int i = 0; i < 2; i++){

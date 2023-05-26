@@ -2,7 +2,9 @@ package com.itizwhatitiz.geliuparduotuve.rest;
 
 import com.itizwhatitiz.geliuparduotuve.dao.CustomerDao;
 import com.itizwhatitiz.geliuparduotuve.entity.Customer;
+import com.itizwhatitiz.geliuparduotuve.logger.Logger;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.CustomerDto;
+import com.itizwhatitiz.geliuparduotuve.rest.dto.GenericDto;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.util.Nonbinding;
@@ -16,6 +18,7 @@ import java.util.List;
 
 @ApplicationScoped
 @Path("/customers")
+@Logger
 public class CustomerController {
     @Inject
     CustomerDao customerDao;
@@ -38,7 +41,7 @@ public class CustomerController {
     @Path("/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findOne(@PathParam("id") Integer id){
+    public Response findOne(@PathParam("id") Integer id, GenericDto dto){
         Customer customer = customerDao.findOne(id);
         if (customer == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -55,7 +58,7 @@ public class CustomerController {
     @Path("/")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findAll(){
+    public Response findAll(GenericDto dto){
         List<Customer> customers = customerDao.findAll();
         List<CustomerDto> customerDtos = new ArrayList<>();
         for(Customer customer:customers){
@@ -126,7 +129,7 @@ public class CustomerController {
     @Path("/{id}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("id") Integer id){
+    public Response delete(@PathParam("id") Integer id, GenericDto dto){
         Customer customer = customerDao.findOne(id);
         if (customer == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
