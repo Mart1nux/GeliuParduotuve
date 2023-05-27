@@ -5,11 +5,10 @@ import com.itizwhatitiz.geliuparduotuve.entity.*;
 import com.itizwhatitiz.geliuparduotuve.logger.Logger;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.CartItemDto;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.GenericDto;
-import com.itizwhatitiz.geliuparduotuve.rest.dto.OrderedItemDto;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.transaction.Transactional;
+import javax.persistence.OptimisticLockException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -39,8 +38,19 @@ public class CartController extends GenericController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response create(CartItemDto cartItemDto){
+        Response response;
+        try {
+            response = _create(cartItemDto);
+        }
+        catch (OptimisticLockException e) {
+            response = Response.status(Response.Status.CONFLICT).build();
+        }
+
+        return response;
+    }
+
+    public Response _create(CartItemDto cartItemDto){
         if (!VerifyIfCallerExists(cartItemDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
@@ -70,8 +80,19 @@ public class CartController extends GenericController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
-    public Response create(GenericDto dto, @PathParam("user_id") Integer userId){
+    public Response toOrder(GenericDto dto, @PathParam("user_id") Integer userId){
+        Response response;
+        try {
+            response = _toOrder(dto, userId);
+        }
+        catch (OptimisticLockException e) {
+            response = Response.status(Response.Status.CONFLICT).build();
+        }
+
+        return response;
+    }
+
+    public Response _toOrder(GenericDto dto, Integer userId){
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
@@ -95,7 +116,6 @@ public class CartController extends GenericController {
         orderDao.persist(order);
 
         List<CartItem> cartItems = cartItemDao.findByCustomer(userId);
-        List<OrderedItemDto> orderedItemDtos = new ArrayList<>();
         for(CartItem cartItem:cartItems) {
             Item item = itemDao.findOne(cartItem.getItem().getId());
             if (item == null) {
@@ -164,8 +184,19 @@ public class CartController extends GenericController {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response update(@PathParam("id") Integer id, CartItemDto cartItemDto){
+        Response response;
+        try {
+            response = _update(id, cartItemDto);
+        }
+        catch (OptimisticLockException e) {
+            response = Response.status(Response.Status.CONFLICT).build();
+        }
+
+        return response;
+    }
+
+    public Response _update(Integer id, CartItemDto cartItemDto){
         if (!VerifyIfCallerExists(cartItemDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
@@ -193,6 +224,8 @@ public class CartController extends GenericController {
         cartItem.setItem(item);
         cartItem.setCustomer(customer);
 
+        cartItemDao.merge(cartItem);
+
         return Response.ok(cartItemDto).build();
     }
 
@@ -200,8 +233,19 @@ public class CartController extends GenericController {
     @PATCH
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response patch(@PathParam("id") Integer id, CartItemDto cartItemDto){
+        Response response;
+        try {
+            response = _patch(id, cartItemDto);
+        }
+        catch (OptimisticLockException e) {
+            response = Response.status(Response.Status.CONFLICT).build();
+        }
+
+        return response;
+    }
+
+    public Response _patch(Integer id, CartItemDto cartItemDto){
         if (!VerifyIfCallerExists(cartItemDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
@@ -235,14 +279,27 @@ public class CartController extends GenericController {
             cartItem.setAmount(cartItemDto.getAmount());
         }
 
+        cartItemDao.merge(cartItem);
+
         return Response.ok(cartItemDto).build();
     }
 
     @Path("/{id}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response delete(@PathParam("id") Integer id, GenericDto dto){
+        Response response;
+        try {
+            response = _delete(id, dto);
+        }
+        catch (OptimisticLockException e) {
+            response = Response.status(Response.Status.CONFLICT).build();
+        }
+
+        return response;
+    }
+
+    public Response _delete(Integer id, GenericDto dto){
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }

@@ -28,6 +28,9 @@ public class Item {
     @ManyToMany(mappedBy = "items", fetch = FetchType.EAGER)
     private Set<Order> orders;
 
+    @Version
+    private Integer version;
+
     public Integer getId() {
         return id;
     }

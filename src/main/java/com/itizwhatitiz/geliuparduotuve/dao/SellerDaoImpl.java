@@ -4,6 +4,7 @@ import com.itizwhatitiz.geliuparduotuve.entity.Seller;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
@@ -17,7 +18,7 @@ public class SellerDaoImpl implements SellerDao{
 
     @Override
     public Seller findOne(Integer id) {
-        return em.find(Seller.class, id);
+        return em.find(Seller.class, id, LockModeType.OPTIMISTIC);
     }
 
     @Override
@@ -37,7 +38,7 @@ public class SellerDaoImpl implements SellerDao{
 
     @Override
     public void remove(Seller seller) {
-        em.remove(seller);
+        em.remove(em.contains(seller) ? seller : em.merge(seller));
     }
 
 }

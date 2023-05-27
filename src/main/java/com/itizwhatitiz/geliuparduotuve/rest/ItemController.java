@@ -11,6 +11,7 @@ import com.itizwhatitiz.geliuparduotuve.rest.dto.ItemDto;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.persistence.OptimisticLockException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -37,6 +38,18 @@ public class ItemController extends GenericController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(ItemDto itemDto){
+        Response response;
+        try {
+            response = _create(itemDto);
+        }
+        catch (OptimisticLockException e) {
+            response = Response.status(Response.Status.CONFLICT).build();
+        }
+
+        return response;
+    }
+
+    public Response _create(ItemDto itemDto){
         if (!VerifyIfCallerExists(itemDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
@@ -105,6 +118,18 @@ public class ItemController extends GenericController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") Integer id, ItemDto itemDto){
+        Response response;
+        try {
+            response = _update(id, itemDto);
+        }
+        catch (OptimisticLockException e) {
+            response = Response.status(Response.Status.CONFLICT).build();
+        }
+
+        return response;
+    }
+
+    public Response _update(Integer id, ItemDto itemDto){
         if (!VerifyIfCallerExists(itemDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
@@ -135,6 +160,18 @@ public class ItemController extends GenericController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response patch(@PathParam("id") Integer id, ItemDto itemDto){
+        Response response;
+        try {
+            response = _patch(id, itemDto);
+        }
+        catch (OptimisticLockException e) {
+            response = Response.status(Response.Status.CONFLICT).build();
+        }
+
+        return response;
+    }
+
+    public Response _patch(Integer id, ItemDto itemDto){
         if (!VerifyIfCallerExists(itemDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
@@ -180,6 +217,18 @@ public class ItemController extends GenericController {
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(@PathParam("id") Integer id, GenericDto dto){
+        Response response;
+        try {
+            response = _delete(id, dto);
+        }
+        catch (OptimisticLockException e) {
+            response = Response.status(Response.Status.CONFLICT).build();
+        }
+
+        return response;
+    }
+
+    public Response _delete(Integer id, GenericDto dto){
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }

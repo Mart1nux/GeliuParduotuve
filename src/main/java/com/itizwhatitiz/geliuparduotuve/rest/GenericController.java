@@ -10,8 +10,16 @@ import javax.inject.Inject;
 public class GenericController {
     @Inject
     CustomerDao customerDao;
+
+    private Customer getCaller(GenericDto dto) {
+        if (dto.getCallerId() == null) {
+            return null;
+        }
+
+        return customerDao.findOne(dto.getCallerId());
+    }
     public String GetCallerRole(GenericDto dto) {
-        Customer caller = customerDao.findOne(dto.getCallerId());
+        Customer caller = getCaller(dto);
 
         if (caller == null) {
             return null;
@@ -20,14 +28,17 @@ public class GenericController {
     }
 
     public Boolean VerifyIfCallerExists(GenericDto dto) {
-        Customer caller = customerDao.findOne(dto.getCallerId());
+        Customer caller = getCaller(dto);
 
         return !(caller == null);
     }
 
     public Boolean VerifyIfCallerIs(GenericDto dto, Integer id) {
-        Customer caller = customerDao.findOne(dto.getCallerId());
+        Customer caller = getCaller(dto);
 
+        if (caller == null) {
+            return null;
+        }
         return caller.getId().equals(id);
     }
 }

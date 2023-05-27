@@ -4,6 +4,7 @@ import com.itizwhatitiz.geliuparduotuve.entity.Item;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
@@ -16,7 +17,7 @@ public class ItemDaoImpl implements ItemDao{
 
     @Override
     public Item findOne(Integer id) {
-        return em.find(Item.class, id);
+        return em.find(Item.class, id, LockModeType.OPTIMISTIC);
     }
 
     @Override
@@ -46,6 +47,6 @@ public class ItemDaoImpl implements ItemDao{
 
     @Override
     public void remove(Item item) {
-        em.remove(item);
+        em.remove(em.contains(item) ? item : em.merge(item));
     }
 }
