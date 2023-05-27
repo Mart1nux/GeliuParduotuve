@@ -173,6 +173,52 @@ public class ItemController extends GenericController {
     }
 
     @Path("/{id}")
+    @PATCH
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response patch(@PathParam("id") Integer id, ItemDto itemDto){
+        if (!VerifyIfCallerExists(itemDto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!GetCallerRole(itemDto).equals("manager") && !GetCallerRole(itemDto).equals("seller")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
+        Item item = itemDao.findOne(id);
+        if (item == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        if (itemDto.getSellerId() != null) {
+            Seller seller = sellerDao.findOne(itemDto.getSellerId());
+            if (seller == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+            item.setSeller(seller);
+        }
+
+        if (itemDto.getName() != null) {
+            item.setName(itemDto.getName());
+        }
+
+        if (itemDto.getAmount() != null) {
+            item.setAmount(itemDto.getAmount());
+        }
+
+        if (itemDto.getPrice() != null) {
+            item.setPrice(itemDto.getPrice());
+        }
+
+        if (itemDto.getDescription() != null) {
+            item.setDescription(itemDto.getDescription());
+        }
+
+        item.setImage(itemDto.getImage());
+        itemDao.merge(item);
+        return Response.ok(itemDto).build();
+    }
+
+    @Path("/{id}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(@PathParam("id") Integer id, GenericDto dto){
