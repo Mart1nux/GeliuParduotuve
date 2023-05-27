@@ -11,7 +11,6 @@ import com.itizwhatitiz.geliuparduotuve.rest.dto.SellerDto;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.OptimisticLockException;
-import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -44,7 +43,6 @@ public class SellerController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _create(SellerDto sellerDto){
         if (!VerifyIfCallerExists(sellerDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -67,7 +65,6 @@ public class SellerController extends GenericController {
     @Path("/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response findOne(@PathParam("id") Integer id, GenericDto dto){
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -89,7 +86,6 @@ public class SellerController extends GenericController {
     @Path("/")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response findAll(GenericDto dto){
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -125,7 +121,6 @@ public class SellerController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _update(Integer id, SellerDto sellerDto){
         if (!VerifyIfCallerExists(sellerDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -164,7 +159,6 @@ public class SellerController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _patch(Integer id, SellerDto sellerDto){
         if (!VerifyIfCallerExists(sellerDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -209,7 +203,6 @@ public class SellerController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _delete(Integer id, GenericDto dto){
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();

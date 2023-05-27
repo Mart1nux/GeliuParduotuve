@@ -9,7 +9,6 @@ import com.itizwhatitiz.geliuparduotuve.rest.dto.GenericDto;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.OptimisticLockException;
-import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -39,7 +38,6 @@ public class CustomerController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _create(CustomerDto customerDto){
         Customer customer = new Customer();
         customer.setFirstname(customerDto.getFirstname());
@@ -117,7 +115,6 @@ public class CustomerController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _update(Integer id, CustomerDto customerDto){
         if (!VerifyIfCallerExists(customerDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -155,7 +152,6 @@ public class CustomerController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _patch(Integer id, CustomerDto customerDto){
         if (!VerifyIfCallerExists(customerDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -207,7 +203,6 @@ public class CustomerController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _delete(Integer id, GenericDto dto){
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();

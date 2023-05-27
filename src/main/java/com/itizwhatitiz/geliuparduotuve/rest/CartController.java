@@ -9,7 +9,6 @@ import com.itizwhatitiz.geliuparduotuve.rest.dto.GenericDto;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.OptimisticLockException;
-import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -51,7 +50,6 @@ public class CartController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _create(CartItemDto cartItemDto){
         if (!VerifyIfCallerExists(cartItemDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -94,7 +92,6 @@ public class CartController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _toOrder(GenericDto dto, Integer userId){
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -199,7 +196,6 @@ public class CartController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _update(Integer id, CartItemDto cartItemDto){
         if (!VerifyIfCallerExists(cartItemDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -249,7 +245,6 @@ public class CartController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _patch(Integer id, CartItemDto cartItemDto){
         if (!VerifyIfCallerExists(cartItemDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -304,7 +299,6 @@ public class CartController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _delete(Integer id, GenericDto dto){
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();

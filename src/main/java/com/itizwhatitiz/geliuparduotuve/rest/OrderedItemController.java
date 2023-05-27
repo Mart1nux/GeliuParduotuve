@@ -9,7 +9,6 @@ import com.itizwhatitiz.geliuparduotuve.rest.dto.OrderedItemDto;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.OptimisticLockException;
-import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -45,7 +44,6 @@ public class OrderedItemController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _create(OrderedItemDto orderedItemDto){
         if (!VerifyIfCallerExists(orderedItemDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -75,7 +73,6 @@ public class OrderedItemController extends GenericController {
     @Path("/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response findOne(@PathParam("id") Integer id, GenericDto dto){
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -100,7 +97,6 @@ public class OrderedItemController extends GenericController {
     @Path("/order/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response findByOrder(@PathParam("id") Integer id, GenericDto dto){
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -142,7 +138,6 @@ public class OrderedItemController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _update(Integer id, OrderedItemDto orderedItemDto){
         if (!VerifyIfCallerExists(orderedItemDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -192,7 +187,6 @@ public class OrderedItemController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _patch(Integer id, OrderedItemDto orderedItemDto){
         if (!VerifyIfCallerExists(orderedItemDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -247,7 +241,6 @@ public class OrderedItemController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _delete(Integer id, GenericDto dto) {
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();

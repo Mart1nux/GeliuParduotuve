@@ -13,7 +13,6 @@ import com.itizwhatitiz.geliuparduotuve.rest.dto.OrderDto;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.OptimisticLockException;
-import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -50,7 +49,6 @@ public class OrderController extends GenericController {
         return response;
     }
 
-    @Transactional
     private Response _create(OrderDto orderDto) {
         if (!VerifyIfCallerExists(orderDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -133,7 +131,6 @@ public class OrderController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _update(Integer id, OrderDto orderDto) {
         if (!VerifyIfCallerExists(orderDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -176,7 +173,6 @@ public class OrderController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _patch(Integer id, OrderDto orderDto){
         if (!VerifyIfCallerExists(orderDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -228,7 +224,6 @@ public class OrderController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _delete(Integer id, GenericDto dto){
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();

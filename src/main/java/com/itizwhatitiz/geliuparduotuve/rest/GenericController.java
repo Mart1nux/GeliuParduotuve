@@ -16,15 +16,14 @@ public class GenericController {
             return null;
         }
 
-        Customer caller = customerDao.findOne(dto.getCallerId());
-        if (caller == null) {
-            return null;
-        }
-
-        return caller;
+        return customerDao.findOne(dto.getCallerId());
     }
     public String GetCallerRole(GenericDto dto) {
         Customer caller = getCaller(dto);
+
+        if (caller == null) {
+            return null;
+        }
         return caller.getRole();
     }
 
@@ -37,6 +36,9 @@ public class GenericController {
     public Boolean VerifyIfCallerIs(GenericDto dto, Integer id) {
         Customer caller = getCaller(dto);
 
+        if (caller == null) {
+            return null;
+        }
         return caller.getId().equals(id);
     }
 }

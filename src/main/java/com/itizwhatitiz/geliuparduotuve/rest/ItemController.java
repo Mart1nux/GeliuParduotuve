@@ -12,7 +12,6 @@ import com.itizwhatitiz.geliuparduotuve.rest.dto.ItemDto;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.OptimisticLockException;
-import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -50,7 +49,6 @@ public class ItemController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _create(ItemDto itemDto){
         if (!VerifyIfCallerExists(itemDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -131,7 +129,6 @@ public class ItemController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _update(Integer id, ItemDto itemDto){
         if (!VerifyIfCallerExists(itemDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -174,7 +171,6 @@ public class ItemController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _patch(Integer id, ItemDto itemDto){
         if (!VerifyIfCallerExists(itemDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
@@ -232,7 +228,6 @@ public class ItemController extends GenericController {
         return response;
     }
 
-    @Transactional
     public Response _delete(Integer id, GenericDto dto){
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
