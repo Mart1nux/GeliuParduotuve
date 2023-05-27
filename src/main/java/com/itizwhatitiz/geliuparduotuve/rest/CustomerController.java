@@ -44,7 +44,7 @@ public class CustomerController extends GenericController {
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        else if (!VerifyIfCallerIs(dto, id) && !GetCallerRole(dto).equals("Manager")) {
+        else if (!VerifyIfCallerIs(dto, id) && !GetCallerRole(dto).equals("manager")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
@@ -68,7 +68,7 @@ public class CustomerController extends GenericController {
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        else if (!GetCallerRole(dto).equals("Manager")) {
+        else if (!GetCallerRole(dto).equals("manager")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
@@ -95,7 +95,7 @@ public class CustomerController extends GenericController {
         if (!VerifyIfCallerExists(customerDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        else if (!VerifyIfCallerIs(customerDto, id) && !GetCallerRole(customerDto).equals("Manager")) {
+        else if (!VerifyIfCallerIs(customerDto, id) && !GetCallerRole(customerDto).equals("manager")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
@@ -121,7 +121,7 @@ public class CustomerController extends GenericController {
         if (!VerifyIfCallerExists(customerDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        else if (!VerifyIfCallerIs(customerDto, id) && !GetCallerRole(customerDto).equals("Manager")) {
+        else if (!VerifyIfCallerIs(customerDto, id) && !GetCallerRole(customerDto).equals("manager")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
@@ -160,7 +160,7 @@ public class CustomerController extends GenericController {
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        else if (!VerifyIfCallerIs(dto, id) && !GetCallerRole(dto).equals("Manager")) {
+        else if (!VerifyIfCallerIs(dto, id) && !GetCallerRole(dto).equals("manager")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 

@@ -41,7 +41,7 @@ public class OrderController extends GenericController {
         if (!VerifyIfCallerExists(orderDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        else if (!VerifyIfCallerIs(orderDto, orderDto.getCustomerId()) && !GetCallerRole(orderDto).equals("Seller")) {
+        else if (!VerifyIfCallerIs(orderDto, orderDto.getCustomerId()) && !GetCallerRole(orderDto).equals("seller")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
@@ -70,7 +70,7 @@ public class OrderController extends GenericController {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        if (!VerifyIfCallerIs(dto, order.getCustomer().getId()) && !GetCallerRole(dto).equals("Seller")) {
+        if (!VerifyIfCallerIs(dto, order.getCustomer().getId()) && !GetCallerRole(dto).equals("seller")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
         OrderDto orderDto = new OrderDto();
@@ -87,7 +87,7 @@ public class OrderController extends GenericController {
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        else if (!GetCallerRole(dto).equals("Seller")) {
+        else if (!GetCallerRole(dto).equals("seller")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
@@ -117,7 +117,7 @@ public class OrderController extends GenericController {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        if (!VerifyIfCallerIs(orderDto, order.getCustomer().getId()) && !GetCallerRole(orderDto).equals("Seller")) {
+        if (!VerifyIfCallerIs(orderDto, order.getCustomer().getId()) && !GetCallerRole(orderDto).equals("seller")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
@@ -147,7 +147,7 @@ public class OrderController extends GenericController {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        if (!VerifyIfCallerIs(orderDto, order.getCustomer().getId()) && !GetCallerRole(orderDto).equals("Seller")) {
+        if (!VerifyIfCallerIs(orderDto, order.getCustomer().getId()) && !GetCallerRole(orderDto).equals("seller")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
@@ -186,7 +186,7 @@ public class OrderController extends GenericController {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        if (!VerifyIfCallerIs(dto, order.getCustomer().getId()) && !GetCallerRole(dto).equals("Seller")) {
+        if (!VerifyIfCallerIs(dto, order.getCustomer().getId()) && !GetCallerRole(dto).equals("seller")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
