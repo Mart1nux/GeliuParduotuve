@@ -2,8 +2,12 @@ package com.itizwhatitiz.geliuparduotuve.rest;
 
 import com.itizwhatitiz.geliuparduotuve.dao.CustomerDao;
 import com.itizwhatitiz.geliuparduotuve.dao.OrderDao;
+import com.itizwhatitiz.geliuparduotuve.dao.OrderedItemDao;
 import com.itizwhatitiz.geliuparduotuve.entity.Customer;
 import com.itizwhatitiz.geliuparduotuve.entity.Order;
+import com.itizwhatitiz.geliuparduotuve.entity.OrderedItem;
+import com.itizwhatitiz.geliuparduotuve.logger.Logger;
+import com.itizwhatitiz.geliuparduotuve.rest.dto.GenericDto;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.OrderDto;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -17,18 +21,30 @@ import java.util.List;
 
 @ApplicationScoped
 @Path("/orders")
-public class OrderController {
+@Logger
+@Transactional
+public class OrderController extends GenericController {
     @Inject
     CustomerDao customerDao;
 
     @Inject
     OrderDao orderDao;
 
+    @Inject
+    OrderedItemDao orderedItemDao;
+
     @Path("/")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(OrderDto orderDto){
+        if (!VerifyIfCallerExists(orderDto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!VerifyIfCallerIs(orderDto, orderDto.getCustomerId()) && !GetCallerRole(orderDto).equals("seller")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         Customer customer = customerDao.findOne(orderDto.getCustomerId());
         if (customer == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -44,10 +60,18 @@ public class OrderController {
     @Path("/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findOne(@PathParam("id") Integer id){
+    public Response findOne(@PathParam("id") Integer id, GenericDto dto){
+        if (!VerifyIfCallerExists(dto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
         Order order = orderDao.findOne(id);
         if (order == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        if (!VerifyIfCallerIs(dto, order.getCustomer().getId()) && !GetCallerRole(dto).equals("seller")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
         }
         OrderDto orderDto = new OrderDto();
         orderDto.setOrderCreateDate(order.getOrderCreateDate());
@@ -59,7 +83,14 @@ public class OrderController {
     @Path("/")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findAll(){
+    public Response findAll(GenericDto dto){
+        if (!VerifyIfCallerExists(dto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!GetCallerRole(dto).equals("seller")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         List<Order> orders = orderDao.findAll();
         List<OrderDto> orderDtos = new ArrayList<>();
         for(Order order:orders){
@@ -77,10 +108,19 @@ public class OrderController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") Integer id, OrderDto orderDto){
+        if (!VerifyIfCallerExists(orderDto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
         Order order = orderDao.findOne(id);
         if (order == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+
+        if (!VerifyIfCallerIs(orderDto, order.getCustomer().getId()) && !GetCallerRole(orderDto).equals("seller")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         Customer customer = customerDao.findOne(orderDto.getCustomerId());
         if (customer == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -98,9 +138,17 @@ public class OrderController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response patch(@PathParam("id") Integer id, OrderDto orderDto){
+        if (!VerifyIfCallerExists(orderDto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
         Order order = orderDao.findOne(id);
         if (order == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        if (!VerifyIfCallerIs(orderDto, order.getCustomer().getId()) && !GetCallerRole(orderDto).equals("seller")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
         }
 
         if (orderDto.getCustomerId() != null) {
@@ -128,11 +176,25 @@ public class OrderController {
     @Path("/{id}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("id") Integer id){
+    public Response delete(@PathParam("id") Integer id, GenericDto dto){
+        if (!VerifyIfCallerExists(dto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
         Order order = orderDao.findOne(id);
         if (order == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+
+        if (!VerifyIfCallerIs(dto, order.getCustomer().getId()) && !GetCallerRole(dto).equals("seller")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
+        List<OrderedItem> orderedItems = orderedItemDao.findByOrder(id);
+        for (OrderedItem orderedItem : orderedItems) {
+            orderedItemDao.remove(orderedItem);
+        }
+
         OrderDto orderDto = new OrderDto();
         orderDto.setOrderCreateDate(order.getOrderCreateDate());
         orderDto.setOrderStatus(order.getOrderStatus());

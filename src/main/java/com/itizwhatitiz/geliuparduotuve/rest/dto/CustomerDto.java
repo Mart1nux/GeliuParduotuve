@@ -1,6 +1,6 @@
 package com.itizwhatitiz.geliuparduotuve.rest.dto;
 
-public class CustomerDto {
+public class CustomerDto extends GenericDto {
     private Integer id;
 
     private String firstname;

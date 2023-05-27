@@ -4,6 +4,8 @@ import com.itizwhatitiz.geliuparduotuve.dao.ItemDao;
 import com.itizwhatitiz.geliuparduotuve.dao.SellerDao;
 import com.itizwhatitiz.geliuparduotuve.entity.Item;
 import com.itizwhatitiz.geliuparduotuve.entity.Seller;
+import com.itizwhatitiz.geliuparduotuve.logger.Logger;
+import com.itizwhatitiz.geliuparduotuve.rest.dto.GenericDto;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.ItemDto;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -18,7 +20,8 @@ import java.util.Random;
 
 @ApplicationScoped
 @Path("/items")
-public class ItemController {
+@Logger
+public class ItemController extends GenericController {
     @Inject
     SellerDao sellerDao;
 
@@ -30,6 +33,13 @@ public class ItemController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(ItemDto itemDto){
+        if (!VerifyIfCallerExists(itemDto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!GetCallerRole(itemDto).equals("manager") && !GetCallerRole(itemDto).equals("seller")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         Seller seller = sellerDao.findOne(itemDto.getSellerId());
         if (seller == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -49,7 +59,7 @@ public class ItemController {
     @Path("/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findOne(@PathParam("id") Integer id){
+    public Response findOne(@PathParam("id") Integer id, GenericDto dto){
         Item item = itemDao.findOne(id);
         if (item == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -68,7 +78,7 @@ public class ItemController {
     @Path("/")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findAll(){
+    public Response findAll(GenericDto dto){
         List<Item> items = itemDao.findAll();
         List<ItemDto> itemDtos = new ArrayList<>();
         for(Item item:items){
@@ -91,6 +101,13 @@ public class ItemController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") Integer id, ItemDto itemDto){
+        if (!VerifyIfCallerExists(itemDto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!GetCallerRole(itemDto).equals("manager") && !GetCallerRole(itemDto).equals("seller")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         Item item = itemDao.findOne(id);
         if (item == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -114,6 +131,13 @@ public class ItemController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response patch(@PathParam("id") Integer id, ItemDto itemDto){
+        if (!VerifyIfCallerExists(itemDto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!GetCallerRole(itemDto).equals("manager") && !GetCallerRole(itemDto).equals("seller")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         Item item = itemDao.findOne(id);
         if (item == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -151,7 +175,14 @@ public class ItemController {
     @Path("/{id}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
-    public Response delete(@PathParam("id") Integer id){
+    public Response delete(@PathParam("id") Integer id, GenericDto dto){
+        if (!VerifyIfCallerExists(dto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!GetCallerRole(dto).equals("manager") && !GetCallerRole(dto).equals("seller")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         Item item = itemDao.findOne(id);
         if (item == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -168,7 +199,7 @@ public class ItemController {
     @Path("/recommendItems")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response recommendItems(){
+    public Response recommendItems(GenericDto dto){
         List<Item> recommendedItems = new ArrayList<>();
         List<Integer> items = itemDao.findIds();
         for (int i = 0; i < 2; i++){

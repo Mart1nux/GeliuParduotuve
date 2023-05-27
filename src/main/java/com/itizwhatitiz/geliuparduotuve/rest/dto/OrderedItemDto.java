@@ -1,19 +1,19 @@
 package com.itizwhatitiz.geliuparduotuve.rest.dto;
 
-public class CartItemDto extends GenericDto {
+public class OrderedItemDto extends GenericDto {
 
-    private Integer customerId;
+    private Integer orderId;
 
     private Integer itemId;
 
     private Integer amount;
 
-    public Integer getCustomerId() {
-        return customerId;
+    public Integer getOrderId() {
+        return orderId;
     }
 
-    public void setCustomerId(Integer customerId) {
-        this.customerId = customerId;
+    public void setOrderId(Integer customerId) {
+        this.orderId = customerId;
     }
 
     public Integer getItemId() {

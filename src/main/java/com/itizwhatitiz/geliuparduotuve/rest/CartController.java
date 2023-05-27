@@ -1,12 +1,11 @@
 package com.itizwhatitiz.geliuparduotuve.rest;
 
-import com.itizwhatitiz.geliuparduotuve.dao.CartItemDao;
-import com.itizwhatitiz.geliuparduotuve.dao.ItemDao;
-import com.itizwhatitiz.geliuparduotuve.dao.CustomerDao;
-import com.itizwhatitiz.geliuparduotuve.entity.CartItem;
-import com.itizwhatitiz.geliuparduotuve.entity.Item;
-import com.itizwhatitiz.geliuparduotuve.entity.Customer;
+import com.itizwhatitiz.geliuparduotuve.dao.*;
+import com.itizwhatitiz.geliuparduotuve.entity.*;
+import com.itizwhatitiz.geliuparduotuve.logger.Logger;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.CartItemDto;
+import com.itizwhatitiz.geliuparduotuve.rest.dto.GenericDto;
+import com.itizwhatitiz.geliuparduotuve.rest.dto.OrderedItemDto;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -14,14 +13,18 @@ import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @ApplicationScoped
 @Path("/cart")
-public class CartController {
+@Logger
+public class CartController extends GenericController {
     @Inject
     ItemDao itemDao;
+    @Inject
+    OrderDao orderDao;
 
     @Inject
     CustomerDao customerDao;
@@ -29,12 +32,22 @@ public class CartController {
     @Inject
     CartItemDao cartItemDao;
 
+    @Inject
+    OrderedItemDao orderedItemDao;
+
     @Path("/")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response create(CartItemDto cartItemDto){
+        if (!VerifyIfCallerExists(cartItemDto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!VerifyIfCallerIs(cartItemDto, cartItemDto.getCustomerId())) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         Item item = itemDao.findOne(cartItemDto.getItemId());
         if (item == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
@@ -53,13 +66,68 @@ public class CartController {
         return Response.ok(cartItem.getId()).build();
     }
 
+    @Path("/customer/{user_id}/toOrder")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Transactional
+    public Response create(GenericDto dto, @PathParam("user_id") Integer userId){
+        if (!VerifyIfCallerExists(dto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
+
+        //create order
+
+        Customer customer = customerDao.findOne(userId);
+        if (customer == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        if (!VerifyIfCallerIs(dto, customer.getId()) && !GetCallerRole(dto).equals("seller")) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
+        Order order = new Order();
+        order.setOrderStatus("created");
+        order.setOrderCreateDate(LocalDateTime.now().toString());
+        order.setCustomer(customer);
+        orderDao.persist(order);
+
+        List<CartItem> cartItems = cartItemDao.findByCustomer(userId);
+        List<OrderedItemDto> orderedItemDtos = new ArrayList<>();
+        for(CartItem cartItem:cartItems) {
+            Item item = itemDao.findOne(cartItem.getItem().getId());
+            if (item == null) {
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+
+            OrderedItem orderedItem = new OrderedItem();
+            orderedItem.setAmount(cartItem.getAmount());
+            orderedItem.setItem(item);
+            orderedItem.setOrder(order);
+            orderedItemDao.persist(orderedItem);
+            cartItemDao.remove(cartItem);
+        }
+
+        return Response.ok(order.getId()).build();
+    }
+
     @Path("/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findOne(@PathParam("id") Integer id){
+    public Response findOne(@PathParam("id") Integer id, GenericDto dto){
+        if (!VerifyIfCallerExists(dto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
         CartItem cartItem = cartItemDao.findOne(id);
         if (cartItem == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        if (!VerifyIfCallerIs(dto, cartItem.getCustomer().getId())) {
+            return Response.status(Response.Status.FORBIDDEN).build();
         }
 
         CartItemDto cartItemDto = new CartItemDto();
@@ -69,26 +137,17 @@ public class CartController {
         return Response.ok(cartItemDto).build();
     }
 
-    @Path("/")
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response findAll(){
-        List<CartItem> cartItems = cartItemDao.findAll();
-        List<CartItemDto> cartItemDtos = new ArrayList<>();
-        for(CartItem cartItem:cartItems){
-            CartItemDto cartItemDto = new CartItemDto();
-            cartItemDto.setAmount(cartItem.getAmount());
-            cartItemDto.setItemId(cartItem.getItem().getId());
-            cartItemDto.setCustomerId(cartItem.getCustomer().getId());
-            cartItemDtos.add(cartItemDto);
-        }
-        return Response.ok(cartItemDtos).build();
-    }
-
     @Path("/customer/{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response findByCustomer(@PathParam("id") Integer id){
+    public Response findByCustomer(@PathParam("id") Integer id, GenericDto dto){
+        if (!VerifyIfCallerExists(dto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        else if (!VerifyIfCallerIs(dto, id)) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         List<CartItem> cartItems = cartItemDao.findByCustomer(id);
         List<CartItemDto> cartItemDtos = new ArrayList<>();
         for(CartItem cartItem:cartItems){
@@ -107,9 +166,17 @@ public class CartController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response update(@PathParam("id") Integer id, CartItemDto cartItemDto){
+        if (!VerifyIfCallerExists(cartItemDto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
         CartItem cartItem = cartItemDao.findOne(id);
         if (cartItem == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        if (!VerifyIfCallerIs(cartItemDto, cartItem.getCustomer().getId())) {
+            return Response.status(Response.Status.FORBIDDEN).build();
         }
 
         Item item = itemDao.findOne(cartItemDto.getItemId());
@@ -135,9 +202,17 @@ public class CartController {
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
     public Response patch(@PathParam("id") Integer id, CartItemDto cartItemDto){
+        if (!VerifyIfCallerExists(cartItemDto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
         CartItem cartItem = cartItemDao.findOne(id);
         if (cartItem == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        if (!VerifyIfCallerIs(cartItemDto, cartItem.getCustomer().getId())) {
+            return Response.status(Response.Status.FORBIDDEN).build();
         }
 
         if (cartItemDto.getItemId() != null) {
@@ -167,11 +242,19 @@ public class CartController {
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response delete(@PathParam("id") Integer id){
+    public Response delete(@PathParam("id") Integer id, GenericDto dto){
+        if (!VerifyIfCallerExists(dto)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
         CartItem cartItem = cartItemDao.findOne(id);
         if (cartItem == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+        if (!VerifyIfCallerIs(dto, cartItem.getCustomer().getId())) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
+
         CartItemDto cartItemDto = new CartItemDto();
         cartItemDto.setAmount(cartItem.getAmount());
         cartItemDto.setItemId(cartItem.getItem().getId());
