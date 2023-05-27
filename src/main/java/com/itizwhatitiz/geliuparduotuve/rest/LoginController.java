@@ -6,7 +6,7 @@ import com.itizwhatitiz.geliuparduotuve.logger.Logger;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.CustomerDto;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.LoginDto;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
