@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
+import java.io.Console;
 import java.io.FileWriter;
 import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
@@ -17,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 public class LoggerImpl {
     @Inject
     CustomerDao customerDao;
-    String filename = "/home/nemo/mif/6/tp/GeliuParduotuve/src/main/java/com/itizwhatitiz/geliuparduotuve/logger/log.txt";
+    String filename = "C:\\Users\\marti\\source\\repos\\GeliuParduotuve\\GeliuParduotuve\\src\\main\\java\\com\\itizwhatitiz\\geliuparduotuve\\logger\\log.txt";
     @AroundInvoke
     public Object log(InvocationContext ctx) throws Exception {
         CompletableFuture.runAsync(() -> {

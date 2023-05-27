@@ -70,8 +70,8 @@ public class OrderedItemController extends GenericController {
         return Response.ok(orderedItem.getId()).build();
     }
 
-    @Path("/{id}")
-    @GET
+    @Path("/get/{id}")
+    @PUT
     @Produces(MediaType.APPLICATION_JSON)
     public Response findOne(@PathParam("id") Integer id, GenericDto dto){
         if (!VerifyIfCallerExists(dto)) {
@@ -95,7 +95,7 @@ public class OrderedItemController extends GenericController {
     }
 
     @Path("/order/{id}")
-    @GET
+    @PUT
     @Produces(MediaType.APPLICATION_JSON)
     public Response findByOrder(@PathParam("id") Integer id, GenericDto dto){
         if (!VerifyIfCallerExists(dto)) {

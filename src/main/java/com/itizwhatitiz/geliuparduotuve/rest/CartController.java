@@ -133,8 +133,8 @@ public class CartController extends GenericController {
         return Response.ok(order.getId()).build();
     }
 
-    @Path("/{id}")
-    @GET
+    @Path("/get/{id}")
+    @PUT
     @Produces(MediaType.APPLICATION_JSON)
     public Response findOne(@PathParam("id") Integer id, GenericDto dto){
         if (!VerifyIfCallerExists(dto)) {
@@ -158,7 +158,7 @@ public class CartController extends GenericController {
     }
 
     @Path("/customer/{id}")
-    @GET
+    @PUT
     @Produces(MediaType.APPLICATION_JSON)
     public Response findByCustomer(@PathParam("id") Integer id, GenericDto dto){
         if (!VerifyIfCallerExists(dto)) {

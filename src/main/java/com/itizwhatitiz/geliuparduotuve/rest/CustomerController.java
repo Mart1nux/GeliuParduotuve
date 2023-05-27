@@ -49,8 +49,8 @@ public class CustomerController extends GenericController {
         return Response.ok(customer).build();
     }
 
-    @Path("/{id}")
-    @GET
+    @Path("/get/{id}")
+    @PUT
     @Produces(MediaType.APPLICATION_JSON)
     public Response findOne(@PathParam("id") Integer id, GenericDto dto){
         if (!VerifyIfCallerExists(dto)) {
@@ -74,7 +74,7 @@ public class CustomerController extends GenericController {
     }
 
     @Path("/")
-    @GET
+    @PUT
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll(GenericDto dto){
         if (!VerifyIfCallerExists(dto)) {

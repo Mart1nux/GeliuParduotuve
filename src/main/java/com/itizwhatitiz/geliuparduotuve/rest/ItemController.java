@@ -73,8 +73,8 @@ public class ItemController extends GenericController {
         return Response.ok(item.getId()).build();
     }
 
-    @Path("/{id}")
-    @GET
+    @Path("/get/{id}")
+    @PUT
     @Produces(MediaType.APPLICATION_JSON)
     public Response findOne(@PathParam("id") Integer id, GenericDto dto){
         com.itizwhatitiz.geliuparduotuve.mybatis.model.Item item = itemMapper.selectByPrimaryKey(id);
@@ -93,7 +93,7 @@ public class ItemController extends GenericController {
     }
 
     @Path("/")
-    @GET
+    @PUT
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll(GenericDto dto){
         List<com.itizwhatitiz.geliuparduotuve.mybatis.model.Item> items = itemMapper.selectAll();
@@ -250,7 +250,7 @@ public class ItemController extends GenericController {
         return Response.ok(itemDto).build();
     }
     @Path("/recommendItems")
-    @GET
+    @PUT
     @Produces(MediaType.APPLICATION_JSON)
     public Response recommendItems(GenericDto dto){
         List<Item> recommendedItems = new ArrayList<>();
@@ -276,7 +276,7 @@ public class ItemController extends GenericController {
     }
 
     @Path("/search")
-    @GET
+    @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response searchItems(ItemDto name){

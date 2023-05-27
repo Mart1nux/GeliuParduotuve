@@ -69,8 +69,8 @@ public class OrderController extends GenericController {
         return Response.ok(order.getId()).build();
     }
 
-    @Path("/{id}")
-    @GET
+    @Path("/get/{id}")
+    @PUT
     @Produces(MediaType.APPLICATION_JSON)
     public Response findOne(@PathParam("id") Integer id, GenericDto dto){
         if (!VerifyIfCallerExists(dto)) {
@@ -93,14 +93,11 @@ public class OrderController extends GenericController {
     }
 
     @Path("/")
-    @GET
+    @PUT
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll(GenericDto dto){
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
-        }
-        else if (!GetCallerRole(dto).equals("seller")) {
-            return Response.status(Response.Status.FORBIDDEN).build();
         }
 
         List<Order> orders = orderDao.findAll();
