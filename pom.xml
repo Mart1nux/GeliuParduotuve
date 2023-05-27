@@ -61,7 +61,7 @@
                     <artifactId>mybatis-generator-maven-plugin</artifactId>
                     <version>1.4.0</version>
                     <configuration>
-                        <contexts>Lab1DB</contexts>
+                        <contexts>OnlineShopDB</contexts>
                         <verbose>true</verbose>
                     </configuration>
                     <executions>

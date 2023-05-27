@@ -4,6 +4,7 @@ import com.itizwhatitiz.geliuparduotuve.dao.ItemDao;
 import com.itizwhatitiz.geliuparduotuve.dao.SellerDao;
 import com.itizwhatitiz.geliuparduotuve.entity.Item;
 import com.itizwhatitiz.geliuparduotuve.entity.Seller;
+import com.itizwhatitiz.geliuparduotuve.mybatis.dao.ItemMapper;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.ItemDto;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -24,6 +25,9 @@ public class ItemController {
 
     @Inject
     ItemDao itemDao;
+
+    @Inject
+    ItemMapper itemMapper;
 
     @Path("/")
     @POST
@@ -49,7 +53,7 @@ public class ItemController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findOne(@PathParam("id") Integer id){
-        Item item = itemDao.findOne(id);
+        com.itizwhatitiz.geliuparduotuve.mybatis.model.Item item = itemMapper.selectByPrimaryKey(id);
         if (item == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -58,7 +62,7 @@ public class ItemController {
         itemDto.setAmount(item.getAmount());
         itemDto.setPrice(item.getPrice());
         itemDto.setDescription(item.getDescription());
-        itemDto.setSellerId(item.getSeller().getId());
+        itemDto.setSellerId(item.getSellerId());
         itemDto.setImage(item.getImage());
         return Response.ok(itemDto).build();
     }
@@ -67,16 +71,16 @@ public class ItemController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll(){
-        List<Item> items = itemDao.findAll();
+        List<com.itizwhatitiz.geliuparduotuve.mybatis.model.Item> items = itemMapper.selectAll();
         List<ItemDto> itemDtos = new ArrayList<>();
-        for(Item item:items){
+        for(com.itizwhatitiz.geliuparduotuve.mybatis.model.Item item:items){
             ItemDto itemDto = new ItemDto();
             itemDto.setId(item.getId());
             itemDto.setName(item.getName());
             itemDto.setAmount(item.getAmount());
             itemDto.setPrice(item.getPrice());
             itemDto.setDescription(item.getDescription());
-            itemDto.setSellerId(item.getSeller().getId());
+            itemDto.setSellerId(item.getSellerId());
             itemDto.setImage(item.getImage());
             itemDtos.add(itemDto);
         }
