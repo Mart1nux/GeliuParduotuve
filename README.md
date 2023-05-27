@@ -16,3 +16,7 @@ WildFly
 
 Norint paleisti parduotuvės Front-End'ą naudokite šį projektą: https://github.com/Mart1nux/GeliuParduotuveFrontEnd
 Šis projektas turėtų būti paleistas prieš Fron-End projektą.
+
+## Žurnalizavimas
+
+Projekto žurnalą galima rasti išpakuotame WildFly aplanke. Failo pavadinimas - `log.txt`.
