@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 public class LoggerImpl {
     @Inject
     CustomerDao customerDao;
-    String filename = "/home/nemo/mif/6/tp/GeliuParduotuve/src/main/java/com/itizwhatitiz/geliuparduotuve/logger/log.txt";
+    String filename = "../log.txt";
     @AroundInvoke
     public Object log(InvocationContext ctx) throws Exception {
         CompletableFuture.runAsync(() -> {
