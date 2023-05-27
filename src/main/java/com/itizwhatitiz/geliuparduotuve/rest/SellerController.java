@@ -35,7 +35,7 @@ public class SellerController extends GenericController {
         if (!VerifyIfCallerExists(sellerDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        else if (!GetCallerRole(sellerDto).equals("Manager")) {
+        else if (!GetCallerRole(sellerDto).equals("manager")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
@@ -57,7 +57,7 @@ public class SellerController extends GenericController {
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        else if (!GetCallerRole(dto).equals("Manager")) {
+        else if (!GetCallerRole(dto).equals("manager")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
@@ -78,7 +78,7 @@ public class SellerController extends GenericController {
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        else if (!GetCallerRole(dto).equals("Manager")) {
+        else if (!GetCallerRole(dto).equals("manager")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
@@ -101,7 +101,7 @@ public class SellerController extends GenericController {
         if (!VerifyIfCallerExists(sellerDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        else if (!GetCallerRole(sellerDto).equals("Manager")) {
+        else if (!GetCallerRole(sellerDto).equals("manager")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
@@ -128,7 +128,7 @@ public class SellerController extends GenericController {
         if (!VerifyIfCallerExists(sellerDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        else if (!GetCallerRole(sellerDto).equals("Manager")) {
+        else if (!GetCallerRole(sellerDto).equals("manager")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
@@ -160,7 +160,7 @@ public class SellerController extends GenericController {
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        else if (!GetCallerRole(dto).equals("Manager")) {
+        else if (!GetCallerRole(dto).equals("manager")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 

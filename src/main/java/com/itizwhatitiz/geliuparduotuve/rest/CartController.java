@@ -13,6 +13,7 @@ import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,29 +66,33 @@ public class CartController extends GenericController {
         return Response.ok(cartItem.getId()).build();
     }
 
-    @Path("/customer/{user_id}/toOrder/{order_id}")
+    @Path("/customer/{user_id}/toOrder")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response create(GenericDto dto, @PathParam("user_id") Integer userId, @PathParam("order_id") Integer orderId){
+    public Response create(GenericDto dto, @PathParam("user_id") Integer userId){
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
-        Order order = orderDao.findOne(orderId);
-        if (order == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
+
+        //create order
 
         Customer customer = customerDao.findOne(userId);
         if (customer == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        if (!VerifyIfCallerIs(dto, order.getCustomer().getId()) && (!VerifyIfCallerIs(dto, customer.getId()) && !GetCallerRole(dto).equals("Seller"))) {
+        if (!VerifyIfCallerIs(dto, customer.getId()) && !GetCallerRole(dto).equals("seller")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
+
+        Order order = new Order();
+        order.setOrderStatus("created");
+        order.setOrderCreateDate(LocalDateTime.now().toString());
+        order.setCustomer(customer);
+        orderDao.persist(order);
 
         List<CartItem> cartItems = cartItemDao.findByCustomer(userId);
         List<OrderedItemDto> orderedItemDtos = new ArrayList<>();
@@ -103,15 +108,9 @@ public class CartController extends GenericController {
             orderedItem.setOrder(order);
             orderedItemDao.persist(orderedItem);
             cartItemDao.remove(cartItem);
-
-            OrderedItemDto orderedItemDto = new OrderedItemDto();
-            orderedItemDto.setAmount(orderedItem.getAmount());
-            orderedItemDto.setItemId(orderedItem.getItem().getId());
-            orderedItemDto.setOrderId(orderedItem.getOrder().getId());
-            orderedItemDtos.add(orderedItemDto);
         }
 
-        return Response.ok(orderedItemDtos).build();
+        return Response.ok(order.getId()).build();
     }
 
     @Path("/{id}")
@@ -247,7 +246,6 @@ public class CartController extends GenericController {
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-
 
         CartItem cartItem = cartItemDao.findOne(id);
         if (cartItem == null) {

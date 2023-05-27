@@ -36,7 +36,7 @@ public class ItemController extends GenericController {
         if (!VerifyIfCallerExists(itemDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        else if (!GetCallerRole(itemDto).equals("Manager") && !GetCallerRole(itemDto).equals("Seller")) {
+        else if (!GetCallerRole(itemDto).equals("manager") && !GetCallerRole(itemDto).equals("seller")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
@@ -104,7 +104,7 @@ public class ItemController extends GenericController {
         if (!VerifyIfCallerExists(itemDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        else if (!GetCallerRole(itemDto).equals("Manager") && !GetCallerRole(itemDto).equals("Seller")) {
+        else if (!GetCallerRole(itemDto).equals("manager") && !GetCallerRole(itemDto).equals("seller")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
@@ -134,7 +134,7 @@ public class ItemController extends GenericController {
         if (!VerifyIfCallerExists(itemDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        else if (!GetCallerRole(itemDto).equals("Manager") && !GetCallerRole(itemDto).equals("Seller")) {
+        else if (!GetCallerRole(itemDto).equals("manager") && !GetCallerRole(itemDto).equals("seller")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
@@ -179,7 +179,7 @@ public class ItemController extends GenericController {
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        else if (!GetCallerRole(dto).equals("Manager") && !GetCallerRole(dto).equals("Seller")) {
+        else if (!GetCallerRole(dto).equals("manager") && !GetCallerRole(dto).equals("seller")) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 

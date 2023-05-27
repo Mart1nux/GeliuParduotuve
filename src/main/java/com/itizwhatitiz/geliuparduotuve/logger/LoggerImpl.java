@@ -4,18 +4,12 @@ import com.itizwhatitiz.geliuparduotuve.dao.CustomerDao;
 import com.itizwhatitiz.geliuparduotuve.entity.Customer;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.GenericDto;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
-import javax.ws.rs.core.Response;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Parameter;
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Logger
