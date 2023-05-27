@@ -20,6 +20,8 @@ public class OrderedItem {
     @JoinColumn(name = "item_id")
     private Item item;
 
+    @Version
+    private Integer version;
 
     public Integer getId() {
         return id;

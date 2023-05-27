@@ -4,6 +4,7 @@ import com.itizwhatitiz.geliuparduotuve.entity.Customer;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
@@ -17,7 +18,7 @@ public class CustomerDaoImpl implements CustomerDao{
 
     @Override
     public Customer findOne(Integer id) {
-        return em.find(Customer.class, id);
+        return em.find(Customer.class, id, LockModeType.OPTIMISTIC);
     }
 
     @Override
@@ -37,7 +38,7 @@ public class CustomerDaoImpl implements CustomerDao{
 
     @Override
     public void remove(Customer customer) {
-        em.remove(customer);
+        em.remove(em.contains(customer) ? customer : em.merge(customer));
     }
 
 

@@ -24,6 +24,9 @@ public class Seller {
         return id;
     }
 
+    @Version
+    private Integer version;
+
     public void setId(Integer id) {
         this.id = id;
     }

@@ -29,6 +29,9 @@ public class Customer {
     @OneToOne(mappedBy = "customer")
     private Seller seller;
 
+    @Version
+    private Integer version;
+
     public Integer getId() {
         return id;
     }

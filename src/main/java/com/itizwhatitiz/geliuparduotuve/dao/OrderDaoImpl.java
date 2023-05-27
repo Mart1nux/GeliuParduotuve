@@ -4,6 +4,7 @@ import com.itizwhatitiz.geliuparduotuve.entity.Order;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
@@ -16,7 +17,7 @@ public class OrderDaoImpl implements OrderDao{
 
     @Override
     public Order findOne(Integer id) {
-        return em.find(Order.class, id);
+        return em.find(Order.class, id, LockModeType.OPTIMISTIC);
     }
 
     @Override
@@ -36,6 +37,6 @@ public class OrderDaoImpl implements OrderDao{
 
     @Override
     public void remove(Order order) {
-        em.remove(order);
+        em.remove(em.contains(order) ? order : em.merge(order));
     }
 }

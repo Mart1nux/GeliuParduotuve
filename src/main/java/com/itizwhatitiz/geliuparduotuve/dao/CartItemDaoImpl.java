@@ -4,10 +4,13 @@ import com.itizwhatitiz.geliuparduotuve.entity.CartItem;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @ApplicationScoped
+@Transactional
 public class CartItemDaoImpl implements CartItemDao{
     @PersistenceContext(unitName = "GeliuParduotuvePersistenceUnit")
     private EntityManager em;
@@ -15,7 +18,7 @@ public class CartItemDaoImpl implements CartItemDao{
 
     @Override
     public CartItem findOne(Integer id) {
-        return em.find(CartItem.class, id);
+        return em.find(CartItem.class, id, LockModeType.OPTIMISTIC);
     }
 
     @Override
@@ -41,7 +44,7 @@ public class CartItemDaoImpl implements CartItemDao{
 
     @Override
     public void remove(CartItem cartItem) {
-        em.remove(cartItem);
+        em.remove(em.contains(cartItem) ? cartItem : em.merge(cartItem));
     }
 
 

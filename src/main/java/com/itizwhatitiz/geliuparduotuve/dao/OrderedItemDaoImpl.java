@@ -4,10 +4,13 @@ import com.itizwhatitiz.geliuparduotuve.entity.OrderedItem;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @ApplicationScoped
+@Transactional
 public class OrderedItemDaoImpl implements OrderedItemDao{
     @PersistenceContext(unitName = "GeliuParduotuvePersistenceUnit")
     private EntityManager em;
@@ -15,7 +18,7 @@ public class OrderedItemDaoImpl implements OrderedItemDao{
 
     @Override
     public OrderedItem findOne(Integer id) {
-        return em.find(OrderedItem.class, id);
+        return em.find(OrderedItem.class, id, LockModeType.OPTIMISTIC);
     }
 
     @Override
@@ -41,7 +44,7 @@ public class OrderedItemDaoImpl implements OrderedItemDao{
 
     @Override
     public void remove(OrderedItem orderedItem) {
-        em.remove(orderedItem);
+        em.remove(em.contains(orderedItem) ? orderedItem : em.merge(orderedItem));
     }
 
 

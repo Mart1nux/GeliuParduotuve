@@ -12,17 +12,18 @@ import com.itizwhatitiz.geliuparduotuve.rest.dto.OrderDto;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.persistence.OptimisticLockException;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @ApplicationScoped
 @Path("/orders")
 @Logger
-@Transactional
 public class OrderController extends GenericController {
     @Inject
     CustomerDao customerDao;
@@ -38,6 +39,19 @@ public class OrderController extends GenericController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(OrderDto orderDto){
+        Response response;
+        try {
+            response = _create(orderDto);
+        }
+        catch (OptimisticLockException e) {
+            response = Response.status(Response.Status.CONFLICT).build();
+        }
+
+        return response;
+    }
+
+    @Transactional
+    private Response _create(OrderDto orderDto) {
         if (!VerifyIfCallerExists(orderDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
@@ -108,6 +122,19 @@ public class OrderController extends GenericController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response update(@PathParam("id") Integer id, OrderDto orderDto){
+        Response response;
+        try {
+            response = _update(id, orderDto);
+        }
+        catch (OptimisticLockException e) {
+            response = Response.status(Response.Status.CONFLICT).build();
+        }
+
+        return response;
+    }
+
+    @Transactional
+    public Response _update(Integer id, OrderDto orderDto) {
         if (!VerifyIfCallerExists(orderDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
@@ -125,6 +152,7 @@ public class OrderController extends GenericController {
         if (customer == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+
         order.setOrderCreateDate(orderDto.getOrderCreateDate());
         order.setOrderStatus(orderDto.getOrderStatus());
         order.setCustomer(customer);
@@ -136,8 +164,20 @@ public class OrderController extends GenericController {
     @PATCH
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Transactional
     public Response patch(@PathParam("id") Integer id, OrderDto orderDto){
+        Response response;
+        try {
+            response = _patch(id, orderDto);
+        }
+        catch (OptimisticLockException e) {
+            response = Response.status(Response.Status.CONFLICT).build();
+        }
+
+        return response;
+    }
+
+    @Transactional
+    public Response _patch(Integer id, OrderDto orderDto){
         if (!VerifyIfCallerExists(orderDto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
@@ -177,6 +217,19 @@ public class OrderController extends GenericController {
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(@PathParam("id") Integer id, GenericDto dto){
+        Response response;
+        try {
+            response = _delete(id, dto);
+        }
+        catch (OptimisticLockException e) {
+            response = Response.status(Response.Status.CONFLICT).build();
+        }
+
+        return response;
+    }
+
+    @Transactional
+    public Response _delete(Integer id, GenericDto dto){
         if (!VerifyIfCallerExists(dto)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
@@ -195,11 +248,12 @@ public class OrderController extends GenericController {
             orderedItemDao.remove(orderedItem);
         }
 
+        orderDao.remove(order);
+
         OrderDto orderDto = new OrderDto();
         orderDto.setOrderCreateDate(order.getOrderCreateDate());
         orderDto.setOrderStatus(order.getOrderStatus());
         orderDto.setCustomerId(order.getCustomer().getId());
-        orderDao.remove(order);
         return Response.ok(orderDto).build();
     }
 }

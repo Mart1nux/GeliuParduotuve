@@ -23,6 +23,9 @@ public class Order {
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private Set<Item> items;
 
+    @Version
+    private Integer version;
+
     public Integer getId() {
         return id;
     }
