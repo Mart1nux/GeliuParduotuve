@@ -5,6 +5,7 @@ import com.itizwhatitiz.geliuparduotuve.dao.SellerDao;
 import com.itizwhatitiz.geliuparduotuve.entity.Item;
 import com.itizwhatitiz.geliuparduotuve.entity.Seller;
 import com.itizwhatitiz.geliuparduotuve.logger.Logger;
+import com.itizwhatitiz.geliuparduotuve.mybatis.dao.ItemMapper;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.GenericDto;
 import com.itizwhatitiz.geliuparduotuve.rest.dto.ItemDto;
 
@@ -27,6 +28,9 @@ public class ItemController extends GenericController {
 
     @Inject
     ItemDao itemDao;
+
+    @Inject
+    ItemMapper itemMapper;
 
     @Path("/")
     @POST
@@ -60,7 +64,7 @@ public class ItemController extends GenericController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findOne(@PathParam("id") Integer id, GenericDto dto){
-        Item item = itemDao.findOne(id);
+        com.itizwhatitiz.geliuparduotuve.mybatis.model.Item item = itemMapper.selectByPrimaryKey(id);
         if (item == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -69,7 +73,7 @@ public class ItemController extends GenericController {
         itemDto.setAmount(item.getAmount());
         itemDto.setPrice(item.getPrice());
         itemDto.setDescription(item.getDescription());
-        itemDto.setSellerId(item.getSeller().getId());
+        itemDto.setSellerId(item.getSellerId());
         itemDto.setDescription(item.getDescription());
         itemDto.setImage(item.getImage());
         return Response.ok(itemDto).build();
@@ -79,16 +83,16 @@ public class ItemController extends GenericController {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response findAll(GenericDto dto){
-        List<Item> items = itemDao.findAll();
+        List<com.itizwhatitiz.geliuparduotuve.mybatis.model.Item> items = itemMapper.selectAll();
         List<ItemDto> itemDtos = new ArrayList<>();
-        for(Item item:items){
+        for(com.itizwhatitiz.geliuparduotuve.mybatis.model.Item item:items){
             ItemDto itemDto = new ItemDto();
             itemDto.setId(item.getId());
             itemDto.setName(item.getName());
             itemDto.setAmount(item.getAmount());
             itemDto.setPrice(item.getPrice());
             itemDto.setDescription(item.getDescription());
-            itemDto.setSellerId(item.getSeller().getId());
+            itemDto.setSellerId(item.getSellerId());
             itemDto.setDescription(item.getDescription());
             itemDto.setImage(item.getImage());
             itemDtos.add(itemDto);
@@ -122,52 +126,6 @@ public class ItemController extends GenericController {
         item.setDescription(itemDto.getDescription());
         item.setSeller(seller);
         item.setDescription(itemDto.getDescription());
-        itemDao.merge(item);
-        return Response.ok(itemDto).build();
-    }
-
-    @Path("/{id}")
-    @PATCH
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response patch(@PathParam("id") Integer id, ItemDto itemDto){
-        if (!VerifyIfCallerExists(itemDto)) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
-        }
-        else if (!GetCallerRole(itemDto).equals("manager") && !GetCallerRole(itemDto).equals("seller")) {
-            return Response.status(Response.Status.FORBIDDEN).build();
-        }
-
-        Item item = itemDao.findOne(id);
-        if (item == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-
-        if (itemDto.getSellerId() != null) {
-            Seller seller = sellerDao.findOne(itemDto.getSellerId());
-            if (seller == null) {
-                return Response.status(Response.Status.NOT_FOUND).build();
-            }
-            item.setSeller(seller);
-        }
-
-        if (itemDto.getName() != null) {
-            item.setName(itemDto.getName());
-        }
-
-        if (itemDto.getAmount() != null) {
-            item.setAmount(itemDto.getAmount());
-        }
-
-        if (itemDto.getPrice() != null) {
-            item.setPrice(itemDto.getPrice());
-        }
-
-        if (itemDto.getDescription() != null) {
-            item.setDescription(itemDto.getDescription());
-        }
-
-        item.setImage(itemDto.getImage());
         itemDao.merge(item);
         return Response.ok(itemDto).build();
     }
