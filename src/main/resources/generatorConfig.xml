@@ -16,17 +16,7 @@
         <sqlMapGenerator targetPackage="com.itizwhatitiz.geliuparduotuve.mybatis.xml" targetProject="MAVEN" />
         <javaClientGenerator type="XMLMAPPER" targetPackage="com.itizwhatitiz.geliuparduotuve.mybatis.dao" targetProject="MAVEN" />
 
-
-        <table schema="public" tableName="customer">
-            <generatedKey column="id" identity="true" sqlStatement="JDBC" />
-        </table>
         <table schema="public" tableName="item">
-            <generatedKey column="id" identity="true" sqlStatement="JDBC" />
-        </table>
-        <table schema="public" tableName="order1">
-            <generatedKey column="id" identity="true" sqlStatement="JDBC" />
-        </table>
-        <table schema="public" tableName="seller">
             <generatedKey column="id" identity="true" sqlStatement="JDBC" />
         </table>
     </context>

@@ -92,8 +92,4 @@ public class Item {
         this.orders = orders;
     }
 
-    @Override
-    public String toString() {
-        return id + " " + name + " " + price + " " + amount;
-    }
 }
